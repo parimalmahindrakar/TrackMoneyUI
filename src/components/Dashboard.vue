@@ -15,12 +15,18 @@
         <v-expansion-panel
           v-for="expense in filteredExpensesList"
           :key="expense"
+          class="chip-container"
         >
           <v-expansion-panel-title>
             <template v-slot:default="{ expanded }">
               <v-row no-gutters>
-                <v-col class="d-flex justify-start" cols="8">
+                <v-col class="d-flex justify-start align-center" cols="8">
                   {{(expense.created_at).slice(0, 10)}} | {{ expense.day }} @ {{expense.bank_name}}
+                  <div>
+                    <v-chip size="x-small" class="ml-2 hover-chip" @click="deleteExpense(expense.id)">
+                      <v-icon>mdi-delete</v-icon>
+                    </v-chip>
+                  </div>
                 </v-col>
                 <v-col
                   cols="2"
@@ -92,6 +98,23 @@ export default {
     },
     handleBankClick(bank) {
       this.filteredExpensesList = this.expensesList.filter(ele => ele.bank_name === bank.bankName)
+    },
+    async deleteExpense(id) {
+      const expensesResponse = await axios.delete("http://127.0.0.1:5000/expenses/delete",
+        {
+          headers:{
+            'Access-Control-Allow-Origin' : '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
+          },
+          params: {
+            id: id
+          }
+        }
+      )
+      if (expensesResponse.status == 204) {
+        window.location.reload()
+      }
     }
   }
 }
@@ -102,5 +125,13 @@ export default {
 .scrollable-panel {
   max-height: 700px;
   overflow-y: auto;
+}
+.hover-chip {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.chip-container:hover .hover-chip {
+  opacity: 1;
 }
 </style>

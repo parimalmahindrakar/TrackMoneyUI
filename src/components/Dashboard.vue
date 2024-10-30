@@ -53,6 +53,41 @@
               </div>
               <v-divider class="w-75 mx-auto"></v-divider>
             </div>
+            <div class="w-75 mx-auto mt-3">
+                <template v-for="item, index in expenseEntriesList" :key="index">
+                  <v-row class="mx-2">
+                    <v-col cols="3">
+                      <v-text-field
+                        v-model="item.amount"
+                        color="primary"
+                        label="Amount"
+                        type="number"
+                        variant="underlined"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="8">
+                      <v-text-field
+                      v-model="item.description"
+                        color="primary"
+                        label="Description"
+                        variant="underlined"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="1">
+                      <v-icon @click="removeExpenseEntry(index)">
+                        mdi-minus
+                      </v-icon>
+                    </v-col>
+                  </v-row>
+                </template>
+                <v-chip class="ml-4 mt-3 cursor-pointer bg-dark" @click="addExpenseEntry(e)">+ Add entry</v-chip>
+                <v-chip
+                  v-if="expenseEntriesList.length >= 1"
+                  class="ml-4 mt-3 cursor-pointer bg-dark"
+                  @click="submitExpenseEntry(expense.id)">
+                  Submit
+                </v-chip>
+            </div>
           </v-expansion-panel-text>
         </v-expansion-panel>
       </div>
@@ -62,13 +97,15 @@
 
 <script>
 import axios from "axios";
+import { reactive } from "vue";
 
 export default {
   data() {
     return {
       banksList: [],
       expensesList: [],
-      filteredExpensesList: []
+      filteredExpensesList: [],
+      expenseEntriesList: reactive([])
     }
   },
   async mounted() {
@@ -115,6 +152,34 @@ export default {
       if (expensesResponse.status == 204) {
         window.location.reload()
       }
+    },
+    addExpenseEntry() {
+      this.expenseEntriesList.push({
+        "amount": null,
+        "description": null
+      })
+    },
+    removeExpenseEntry(counter) {
+      this.expenseEntriesList.splice(counter, 1)
+    },
+    submitExpenseEntry(_id) {
+      axios.patch("http://127.0.0.1:5000/expenses/add-entry",
+        this.expenseEntriesList,
+        {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
+          },
+          params: {
+            id: _id
+          }
+        }
+      ).then(res => {
+        if (res.status ==  201) {
+          window.location.reload()
+        }
+      })
     }
   }
 }

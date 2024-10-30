@@ -10,6 +10,9 @@
       />
     </div>
     <v-divider class="my-10" thickness="2" color="black"></v-divider>
+    <div class="w-100 mb-8 d-flex justify-center">
+      <v-btn class="w-75">Add an expense</v-btn>
+    </div>
     <v-expansion-panels>
       <div class="scrollable-panel w-75">
         <v-expansion-panel
@@ -105,20 +108,20 @@ export default {
       banksList: [],
       expensesList: [],
       filteredExpensesList: [],
-      expenseEntriesList: reactive([])
-    }
-  },
-  async mounted() {
-    const headers = {
+      expenseEntriesList: reactive([]),
+      headers: {
         'Access-Control-Allow-Origin' : '*',
         'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
     }
+    }
+  },
+  async mounted() {
     const expensesResponse = await axios.get("http://127.0.0.1:5000/expenses/",
-        { headers:headers }
+        { headers:this.headers }
     )
     const banksResponse = await axios.get("http://127.0.0.1:5000/banks/",
-        { headers:headers }
+        { headers:this.headers }
     )
     if (banksResponse.status == 200) {
       this.banksList = banksResponse.data.banks.map(ele => ({ "bankName": ele.name, "remainingBalance": ele.current_balance }))
@@ -137,20 +140,19 @@ export default {
       this.filteredExpensesList = this.expensesList.filter(ele => ele.bank_name === bank.bankName)
     },
     async deleteExpense(id) {
-      const expensesResponse = await axios.delete("http://127.0.0.1:5000/expenses/delete",
-        {
-          headers:{
-            'Access-Control-Allow-Origin' : '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
-          },
-          params: {
-            id: id
+      const answer = confirm("Are you sure you wnat to delete this expense ?")
+      if (answer) {
+        const expensesResponse = await axios.delete("http://127.0.0.1:5000/expenses/delete",
+          {
+            headers: this.headers,
+            params: {
+              id: id
+            }
           }
+        )
+        if (expensesResponse.status == 204) {
+          window.location.reload()
         }
-      )
-      if (expensesResponse.status == 204) {
-        window.location.reload()
       }
     },
     addExpenseEntry() {
@@ -166,11 +168,7 @@ export default {
       axios.patch("http://127.0.0.1:5000/expenses/add-entry",
         this.expenseEntriesList,
         {
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
-          },
+          headers: this.headers,
           params: {
             id: _id
           }

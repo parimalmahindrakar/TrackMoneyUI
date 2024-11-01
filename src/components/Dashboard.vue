@@ -50,8 +50,13 @@
           <v-expansion-panel-text>
             <v-divider class="w-75 mx-auto"></v-divider>
             <div v-for="item in expense.expenses" :key="item.id" >
-              <div class="d-flex justify-space-between w-75 mx-auto align-center">
-                <div class="ml-4 my-2">{{item.description}}</div>
+              <div class="d-flex justify-space-between w-75 mx-auto align-center expense-entry">
+                <div class="ml-4 my-2">
+                  {{item.description}}
+                  <v-chip size="x-small" class="ml-2 hover-entry-chip" @click="deleteExpenseEnrty(expense.id, item.ee_id)">
+                    <v-icon>mdi-delete</v-icon>
+                  </v-chip>
+                </div>
                 <div class="mr-4 ">{{item.amount}}/-</div>
               </div>
               <v-divider class="w-75 mx-auto"></v-divider>
@@ -155,6 +160,23 @@ export default {
         }
       }
     },
+    async deleteExpenseEnrty(expenseId, expenseEntryId) {
+      const answer = confirm("Are you sure you wnat to delete this entry ?")
+      if (answer) {
+        const expensesResponse = await axios.delete("http://127.0.0.1:5000/expenses/delete-entry",
+          {
+            headers: this.headers,
+            params: {
+              id: expenseId,
+              ee_id: expenseEntryId
+            }
+          }
+        )
+        if (expensesResponse.status == 204) {
+          window.location.reload()
+        }
+      }
+    },
     addExpenseEntry() {
       this.expenseEntriesList.push({
         "amount": null,
@@ -189,12 +211,15 @@ export default {
   max-height: 700px;
   overflow-y: auto;
 }
-.hover-chip {
+.hover-chip,.hover-entry-chip {
   opacity: 0;
   transition: opacity 0.2s ease;
 }
 
 .chip-container:hover .hover-chip {
+  opacity: 1;
+}
+.expense-entry:hover .hover-entry-chip {
   opacity: 1;
 }
 </style>

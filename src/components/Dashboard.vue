@@ -10,9 +10,48 @@
       />
     </div>
     <v-divider class="my-10" thickness="2" color="black"></v-divider>
-    <div class="w-100 mb-8 d-flex justify-center">
-      <v-btn class="w-75">Add an expense</v-btn>
-    </div>
+
+
+    <v-dialog max-width="500" v-model="dialog">
+      <template v-slot:activator="{ props: activatorProps }">
+        <div class="w-100 mb-8 d-flex justify-center">
+          <v-btn
+            v-bind="activatorProps"
+            class="w-75"
+          >Add an expense
+          </v-btn>
+        </div>
+      </template>
+
+      <template v-slot:default="{ isActive }">
+        <v-card class="pt-4 px-4" >
+          <span class="text-h5 ml-3 mb-5">Add an Expense</span>
+
+          <div class="d-flex justify-space-between">
+            <v-select
+              v-model="selectedBank"
+              :items="items"
+              placeholder="Select the bank"
+              item-title="bankName"
+              item-value="value"
+              label="Select"
+              persistent-hint
+              single-line
+            ></v-select>
+
+
+          </div>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              text="Close Dialog"
+              @click="isActive.value = false"
+            ></v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
+
     <v-expansion-panels>
       <div class="scrollable-panel w-75">
         <v-expansion-panel
@@ -118,7 +157,10 @@ export default {
         'Access-Control-Allow-Origin' : '*',
         'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
-    }
+      },
+      dialog: true,
+      selectedBank: '',
+      items: [],
     }
   },
   async mounted() {
@@ -129,7 +171,13 @@ export default {
         { headers:this.headers }
     )
     if (banksResponse.status == 200) {
-      this.banksList = banksResponse.data.banks.map(ele => ({ "bankName": ele.name, "remainingBalance": ele.current_balance }))
+      this.banksList = banksResponse.data.banks.map(ele => ({
+        "bankName": ele.name,
+        "remainingBalance": ele.current_balance,
+        "bankId": ele.id
+      }))
+      this.items = this.banksList.map(ele => ({ bankName: ele.bankName, value: ele.bankId }))
+
     }
     if (expensesResponse.status == 200) {
       this.expensesList = expensesResponse?.data?.expenses

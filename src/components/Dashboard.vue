@@ -11,47 +11,6 @@
     </div>
     <v-divider class="my-10" thickness="2" color="black"></v-divider>
 
-
-    <v-dialog max-width="500" v-model="dialog">
-      <template v-slot:activator="{ props: activatorProps }">
-        <div class="w-100 mb-8 d-flex justify-center">
-          <v-btn
-            v-bind="activatorProps"
-            class="w-75"
-          >Add an expense
-          </v-btn>
-        </div>
-      </template>
-
-      <template v-slot:default="{ isActive }">
-        <v-card class="pt-4 px-4" >
-          <span class="text-h5 ml-3 mb-5">Add an Expense</span>
-
-          <div class="d-flex justify-space-between">
-            <v-select
-              v-model="selectedBank"
-              :items="items"
-              placeholder="Select the bank"
-              item-title="bankName"
-              item-value="value"
-              label="Select"
-              persistent-hint
-              single-line
-            ></v-select>
-
-
-          </div>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              text="Close Dialog"
-              @click="isActive.value = false"
-            ></v-btn>
-          </v-card-actions>
-        </v-card>
-      </template>
-    </v-dialog>
-
     <v-expansion-panels>
       <div class="scrollable-panel w-75">
         <v-expansion-panel
@@ -158,7 +117,6 @@ export default {
         'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
       },
-      dialog: true,
       selectedBank: '',
       items: [],
     }
@@ -235,6 +193,18 @@ export default {
       this.expenseEntriesList.splice(counter, 1)
     },
     submitExpenseEntry(_id) {
+      let validEntries = this.expenseEntriesList.filter(ele => ele.amount && ele.description)
+      validEntries = validEntries.map((ele) => {
+          if (ele.amount < 0) {
+              return {
+                  "amount": ele.amount,
+                  "description": ele.description,
+                  "expense_entry_type": "ADD"
+              }
+          } else {
+              return ele
+          }
+      })
       axios.patch("http://127.0.0.1:5000/expenses/add-entry",
         this.expenseEntriesList,
         {

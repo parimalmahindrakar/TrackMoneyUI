@@ -217,7 +217,7 @@ export default {
     async deleteExpense(id) {
       const answer = confirm("Are you sure you wnat to delete this expense ?")
       if (answer) {
-        const expensesResponse = await axios.delete("expenses/delete/",
+        const expensesResponse = await axios.delete("expenses/delete",
           {
             params: {
               id: id
@@ -233,7 +233,7 @@ export default {
     async deleteExpenseEnrty(expenseId, expenseEntryId) {
       const answer = confirm("Are you sure you wnat to delete this entry ?")
       if (answer) {
-        const expensesResponse = await axios.delete("expenses/delete-entry/",
+        const expensesResponse = await axios.delete("expenses/delete-entry",
           {
             params: {
               id: expenseId,
@@ -269,7 +269,7 @@ export default {
               return ele
           }
       })
-      axios.patch("expenses/add-entry/",
+      axios.patch("expenses/add-entry",
         this.expenseEntriesList,
         {
           params: {

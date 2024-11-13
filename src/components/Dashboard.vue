@@ -10,8 +10,77 @@
       />
     </div>
     <v-divider class="my-10" thickness="2" color="black"></v-divider>
-
     <v-expansion-panels>
+      <div class="w-75">
+        <v-expansion-panel class="chip-container mb-10">
+          <v-expansion-panel-title>
+            <template v-slot:default="{ expanded }">
+              <v-row no-gutters>
+                <v-col class="d-flex justify-start align-center" cols="8">
+                  Add an expense
+                </v-col>
+              </v-row>
+            </template>
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <v-row class="w-100">
+              <v-col cols="6">
+                <v-select
+                  :items="items"
+                  v-model="selectedBank"
+                  placeholder="Select the bank"
+                ></v-select>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field
+                  label="Add the date"
+                  v-model="expenseEntryCreationDate"
+                >
+                </v-text-field>
+              </v-col>
+            </v-row>
+            <div class="d-flex justify-center align-center">
+              <div class="w-75 mx-auto mt-3">
+                <template v-for="item, index in initialExpenseEntriesList" :key="index">
+                  <v-row class="mx-2">
+                    <v-col cols="3">
+                      <v-text-field
+                        v-model="item.amount"
+                        color="primary"
+                        label="Amount"
+                        type="number"
+                        variant="underlined"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="8">
+                      <v-text-field
+                      v-model="item.description"
+                        color="primary"
+                        label="Description"
+                        variant="underlined"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="1">
+                      <v-icon @click="removeInitialExpenseEntry(index)">
+                        mdi-minus
+                      </v-icon>
+                    </v-col>
+                  </v-row>
+                </template>
+                <div class="d-flex justify-center align-center">
+                  <v-chip class="ml-4 mt-3 cursor-pointer bg-dark w-25 text-center" @click="addInitialExpenseEntry(e)">+ Add entry</v-chip>
+                  <v-chip
+                    v-if="initialExpenseEntriesList.length >= 1"
+                    class="ml-4 mt-3 cursor-pointer bg-dark w-25"
+                    @click="submitExpense">
+                    Submit
+                  </v-chip>
+                </div>
+              </div>
+            </div>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </div>
       <div class="scrollable-panel w-75">
         <v-expansion-panel
           v-for="expense in filteredExpensesList"
@@ -119,6 +188,8 @@ export default {
       },
       selectedBank: '',
       items: [],
+      initialExpenseEntriesList: reactive([]),
+      expenseEntryCreationDate: "12-11-2024 00:00"
     }
   },
   async mounted() {
@@ -134,8 +205,7 @@ export default {
         "remainingBalance": ele.current_balance,
         "bankId": ele.id
       }))
-      this.items = this.banksList.map(ele => ({ bankName: ele.bankName, value: ele.bankId }))
-
+      this.items = this.banksList.map(ele => ({ title: ele.bankName, value: ele.bankId }))
     }
     if (expensesResponse.status == 200) {
       this.expensesList = expensesResponse?.data?.expenses
@@ -213,6 +283,43 @@ export default {
             id: _id
           }
         }
+      ).then(res => {
+        if (res.status ==  201) {
+          window.location.reload()
+        }
+      })
+    },
+    addInitialExpenseEntry() {
+      this.initialExpenseEntriesList.push({
+        "amount": null,
+        "description": null
+      })
+    },
+    removeInitialExpenseEntry(counter) {
+      this.initialExpenseEntriesList.splice(counter, 1)
+    },
+    submitExpense() {
+      let validEntries = this.initialExpenseEntriesList.filter(ele => ele.amount && ele.description)
+      validEntries = validEntries.map((ele) => {
+          if (ele.amount < 0) {
+            return {
+              "amount": ele.amount,
+              "description": ele.description,
+              "expense_entry_type": "ADD"
+            }
+          } else {
+            return ele
+          }
+      })
+
+      const data =  {
+        "bank_id": this.selectedBank,
+        "expenses": validEntries,
+        "created_at": this.expenseEntryCreationDate
+      }
+      axios.post("http://127.0.0.1:5000/expenses/create",
+        data,
+        { headers: this.headers }
       ).then(res => {
         if (res.status ==  201) {
           window.location.reload()

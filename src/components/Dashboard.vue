@@ -173,6 +173,7 @@
 <script>
 import axios from "axios";
 import { reactive } from "vue";
+import { filterValidExpenses } from '../helper/helper'
 
 export default {
   data() {
@@ -257,20 +258,8 @@ export default {
       this.expenseEntriesList.splice(counter, 1)
     },
     submitExpenseEntry(_id) {
-      let validEntries = this.expenseEntriesList.filter(ele => ele.amount && ele.description)
-      validEntries = validEntries.map((ele) => {
-          if (ele.amount < 0) {
-              return {
-                  "amount": ele.amount,
-                  "description": ele.description,
-                  "expense_entry_type": "ADD"
-              }
-          } else {
-              return ele
-          }
-      })
       axios.patch("expenses/add-entry",
-        this.expenseEntriesList,
+        filterValidExpenses(this.expenseEntriesList),
         {
           params: {
             id: _id
@@ -293,22 +282,9 @@ export default {
       this.initialExpenseEntriesList.splice(counter, 1)
     },
     submitExpense() {
-      let validEntries = this.initialExpenseEntriesList.filter(ele => ele.amount && ele.description)
-      validEntries = validEntries.map((ele) => {
-          if (ele.amount < 0) {
-            return {
-              "amount": ele.amount,
-              "description": ele.description,
-              "expense_entry_type": "ADD"
-            }
-          } else {
-            return ele
-          }
-      })
-
       const data =  {
         "bank_id": this.selectedBank,
-        "expenses": validEntries,
+        "expenses": filterValidExpenses(this.initialExpenseEntriesList),
         "created_at": this.expenseEntryCreationDate
       }
       axios.post("expenses/create",

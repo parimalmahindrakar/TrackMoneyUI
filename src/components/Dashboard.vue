@@ -181,11 +181,6 @@ export default {
       expensesList: [],
       filteredExpensesList: [],
       expenseEntriesList: reactive([]),
-      headers: {
-        'Access-Control-Allow-Origin' : '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
-      },
       selectedBank: '',
       items: [],
       initialExpenseEntriesList: reactive([]),
@@ -193,12 +188,8 @@ export default {
     }
   },
   async mounted() {
-    const expensesResponse = await axios.get("http://127.0.0.1:5000/expenses/",
-        { headers:this.headers }
-    )
-    const banksResponse = await axios.get("http://127.0.0.1:5000/banks/",
-        { headers:this.headers }
-    )
+    const expensesResponse = await axios.get("http://127.0.0.1:5000/expenses/")
+    const banksResponse = await axios.get("http://127.0.0.1:5000/banks/")
     if (banksResponse.status == 200) {
       this.banksList = banksResponse.data.banks.map(ele => ({
         "bankName": ele.name,
@@ -225,7 +216,6 @@ export default {
       if (answer) {
         const expensesResponse = await axios.delete("http://127.0.0.1:5000/expenses/delete",
           {
-            headers: this.headers,
             params: {
               id: id
             }
@@ -241,7 +231,6 @@ export default {
       if (answer) {
         const expensesResponse = await axios.delete("http://127.0.0.1:5000/expenses/delete-entry",
           {
-            headers: this.headers,
             params: {
               id: expenseId,
               ee_id: expenseEntryId
@@ -278,7 +267,6 @@ export default {
       axios.patch("http://127.0.0.1:5000/expenses/add-entry",
         this.expenseEntriesList,
         {
-          headers: this.headers,
           params: {
             id: _id
           }
@@ -319,7 +307,6 @@ export default {
       }
       axios.post("http://127.0.0.1:5000/expenses/create",
         data,
-        { headers: this.headers }
       ).then(res => {
         if (res.status ==  201) {
           window.location.reload()

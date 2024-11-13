@@ -184,12 +184,15 @@ export default {
       selectedBank: '',
       items: [],
       initialExpenseEntriesList: reactive([]),
-      expenseEntryCreationDate: "12-11-2024 00:00"
+      expenseEntryCreationDate: "12-11-2024 00:00",
+      TM_BACKEND_URL: import.meta.env.VITE_TM_BACKEND_URL
     }
   },
   async mounted() {
-    const expensesResponse = await axios.get("http://127.0.0.1:5000/expenses/")
-    const banksResponse = await axios.get("http://127.0.0.1:5000/banks/")
+    const expensesResponse = await axios.get("expenses/",
+    { baseURL: this.TM_BACKEND_URL })
+    const banksResponse = await axios.get("banks/",
+    { baseURL: this.TM_BACKEND_URL })
     if (banksResponse.status == 200) {
       this.banksList = banksResponse.data.banks.map(ele => ({
         "bankName": ele.name,
@@ -214,11 +217,12 @@ export default {
     async deleteExpense(id) {
       const answer = confirm("Are you sure you wnat to delete this expense ?")
       if (answer) {
-        const expensesResponse = await axios.delete("http://127.0.0.1:5000/expenses/delete",
+        const expensesResponse = await axios.delete("expenses/delete/",
           {
             params: {
               id: id
-            }
+            },
+            baseURL: this.TM_BACKEND_URL
           }
         )
         if (expensesResponse.status == 204) {
@@ -229,12 +233,13 @@ export default {
     async deleteExpenseEnrty(expenseId, expenseEntryId) {
       const answer = confirm("Are you sure you wnat to delete this entry ?")
       if (answer) {
-        const expensesResponse = await axios.delete("http://127.0.0.1:5000/expenses/delete-entry",
+        const expensesResponse = await axios.delete("expenses/delete-entry/",
           {
             params: {
               id: expenseId,
               ee_id: expenseEntryId
-            }
+            },
+            baseURL: this.TM_BACKEND_URL
           }
         )
         if (expensesResponse.status == 204) {
@@ -264,12 +269,13 @@ export default {
               return ele
           }
       })
-      axios.patch("http://127.0.0.1:5000/expenses/add-entry",
+      axios.patch("expenses/add-entry/",
         this.expenseEntriesList,
         {
           params: {
             id: _id
-          }
+          },
+          baseURL: this.TM_BACKEND_URL
         }
       ).then(res => {
         if (res.status ==  201) {
@@ -305,8 +311,9 @@ export default {
         "expenses": validEntries,
         "created_at": this.expenseEntryCreationDate
       }
-      axios.post("http://127.0.0.1:5000/expenses/create",
+      axios.post("expenses/create",
         data,
+        { baseURL: this.TM_BACKEND_URL }
       ).then(res => {
         if (res.status ==  201) {
           window.location.reload()

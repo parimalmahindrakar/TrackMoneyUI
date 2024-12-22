@@ -11,77 +11,102 @@
     </div>
     <v-divider class="my-10" thickness="2" color="black"></v-divider>
     <v-expansion-panels>
-      <div class="w-75">
-        <v-expansion-panel class="chip-container mb-10">
-          <v-expansion-panel-title>
-            <template v-slot:default="{ expanded }">
-              <v-row no-gutters>
-                <v-col class="d-flex justify-start align-center" cols="8">
-                  Add an expense
-                </v-col>
-              </v-row>
-            </template>
-          </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <v-row class="w-100">
-              <v-col cols="6">
-                <v-select
-                  :items="items"
-                  v-model="selectedBank"
-                  placeholder="Select the bank"
-                ></v-select>
-              </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  label="Add the date"
-                  v-model="expenseEntryCreationDate"
-                >
-                </v-text-field>
-              </v-col>
-            </v-row>
-            <div class="d-flex justify-center align-center">
-              <div class="w-75 mx-auto mt-3">
-                <template v-for="item, index in initialExpenseEntriesList" :key="index">
-                  <v-row class="mx-2">
-                    <v-col cols="3">
-                      <v-text-field
-                        v-model="item.amount"
-                        color="primary"
-                        label="Amount"
-                        type="number"
-                        variant="underlined"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="8">
-                      <v-text-field
-                      v-model="item.description"
-                        color="primary"
-                        label="Description"
-                        variant="underlined"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="1">
-                      <v-icon @click="removeInitialExpenseEntry(index)">
-                        mdi-minus
-                      </v-icon>
+      <div class="w-100 d-flex">
+        <v-row>
+          <v-col cols="9">
+            <v-expansion-panel class="chip-container mb-10">
+              <v-expansion-panel-title>
+                <template v-slot:default="{ expanded }">
+                  <v-row no-gutters>
+                    <v-col class="d-flex justify-start align-center" cols="8">
+                      Add an expense
                     </v-col>
                   </v-row>
                 </template>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <v-row class="w-100">
+                  <v-col cols="6">
+                    <v-select
+                      :items="items"
+                      v-model="selectedBank"
+                      placeholder="Select the bank"
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-text-field
+                      label="Add the date"
+                      v-model="expenseEntryCreationDate"
+                    >
+                    </v-text-field>
+                  </v-col>
+                </v-row>
                 <div class="d-flex justify-center align-center">
-                  <v-chip class="ml-4 mt-3 cursor-pointer bg-dark w-25 text-center" @click="addInitialExpenseEntry(e)">+ Add entry</v-chip>
-                  <v-chip
-                    v-if="initialExpenseEntriesList.length >= 1"
-                    class="ml-4 mt-3 cursor-pointer bg-dark w-25"
-                    @click="submitExpense">
-                    Submit
-                  </v-chip>
+                  <div class="w-75 mx-auto mt-3">
+                    <template v-for="item, index in initialExpenseEntriesList" :key="index">
+                      <v-row class="mx-2">
+                        <v-col cols="3">
+                          <v-text-field
+                            v-model="item.amount"
+                            color="primary"
+                            label="Amount"
+                            type="number"
+                            variant="underlined"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="8">
+                          <v-text-field
+                          v-model="item.description"
+                            color="primary"
+                            label="Description"
+                            variant="underlined"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                          <v-icon @click="removeInitialExpenseEntry(index)">
+                            mdi-minus
+                          </v-icon>
+                        </v-col>
+                      </v-row>
+                    </template>
+                    <div class="d-flex justify-center align-center">
+                      <v-chip class="ml-4 mt-3 cursor-pointer bg-dark w-25 text-center" @click="addInitialExpenseEntry(e)">+ Add entry</v-chip>
+                      <v-chip
+                        v-if="initialExpenseEntriesList.length >= 1"
+                        class="ml-4 mt-3 cursor-pointer bg-dark w-25"
+                        @click="submitExpense">
+                        Submit
+                      </v-chip>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+          </v-col>
+          <v-col cols="3">
+            <v-expansion-panel class="chip-container mb-10">
+              <v-expansion-panel-title>
+                <template v-slot:default="{ expanded }">
+                  <v-row no-gutters>
+                    <v-col class="d-flex justify-start align-center" cols="8">
+                      Create the tag
+                    </v-col>
+                  </v-row>
+                </template>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <v-combobox
+                  clearable
+                  :items="entryTags"
+                  v-model="newEntryTag"
+                ></v-combobox>
+                <v-btn class="w-100" @click="addTag">Submit</v-btn>
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+          </v-col>
+        </v-row>
       </div>
-      <div class="scrollable-panel w-75">
+      <div class="scrollable-panel w-100">
         <v-expansion-panel
           v-for="expense in filteredExpensesList"
           :key="expense"
@@ -182,6 +207,8 @@ export default {
       expensesList: [],
       filteredExpensesList: [],
       expenseEntriesList: reactive([]),
+      entryTags: [],
+      newEntryTag: null,
       selectedBank: '',
       items: [],
       initialExpenseEntriesList: reactive([]),
@@ -191,9 +218,11 @@ export default {
   },
   async mounted() {
     const expensesResponse = await axios.get("expenses/",
-    { baseURL: this.TM_BACKEND_URL })
+                              { baseURL: this.TM_BACKEND_URL })
     const banksResponse = await axios.get("banks/",
-    { baseURL: this.TM_BACKEND_URL })
+                              { baseURL: this.TM_BACKEND_URL })
+    const tagsResponse = await axios.get("entry-tags/",
+                              { baseURL: this.TM_BACKEND_URL })
     if (banksResponse.status == 200) {
       this.banksList = banksResponse.data.banks.map(ele => ({
         "bankName": ele.name,
@@ -205,6 +234,9 @@ export default {
     if (expensesResponse.status == 200) {
       this.expensesList = expensesResponse?.data?.expenses
       this.filteredExpensesList = this.expensesList
+    }
+    if (tagsResponse.status == 200) {
+      this.entryTags = tagsResponse?.data?.entry_tags.map(ele => ele.name)
     }
   },
   methods: {
@@ -229,6 +261,19 @@ export default {
         if (expensesResponse.status == 204) {
           window.location.reload()
         }
+      }
+    },
+    async addTag(extraParam=null, e_id=null, ee_id=null){
+      if (this.newEntryTag) {
+        const entryTagsResponse = await axios.post("entry-tags/create",
+          { "name": this.newEntryTag },
+          { baseURL: this.TM_BACKEND_URL}
+        )
+        if (entryTagsResponse.status == 201) {
+          window.location.reload()
+        }
+      } else if (e_id !== null && ee_id !== null) {
+
       }
     },
     async deleteExpenseEnrty(expenseId, expenseEntryId) {

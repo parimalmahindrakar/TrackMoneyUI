@@ -1,6 +1,6 @@
 <template>
   <v-container class="mt-5">
-    <div class="d-flex">
+    <div class="d-flex justify-space-between">
       <Bank
         v-for="(bank, index) in banksList"
         :key="index"

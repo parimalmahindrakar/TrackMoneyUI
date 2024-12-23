@@ -212,7 +212,7 @@ export default {
       selectedBank: '',
       items: [],
       initialExpenseEntriesList: reactive([]),
-      expenseEntryCreationDate: "12-11-2024 00:00",
+      expenseEntryCreationDate: '',
       TM_BACKEND_URL: import.meta.env.VITE_TM_BACKEND_URL
     }
   },
@@ -238,6 +238,8 @@ export default {
     if (tagsResponse.status == 200) {
       this.entryTags = tagsResponse?.data?.entry_tags.map(ele => ele.name)
     }
+    const date = new Date()
+    this.expenseEntryCreationDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} 00:00`
   },
   methods: {
     // TODO: make usable following method

@@ -39,6 +39,5 @@ export const fetchAccessToken = () => {
         }
     } else {
         traceMyMoneyStore().setLoggedInStatus(false)
-        // redirect to the login page
     }
 }

@@ -73,7 +73,6 @@
         "registerUser"
       ]),
       registerUserSoft() {
-        debugger
         const isPasswordMatched = this.password === this.confirmedPassword
         if (this.userName !== '' && isPasswordMatched && this.email !== '') {
           this.registerUser({

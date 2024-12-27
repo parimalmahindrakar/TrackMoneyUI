@@ -137,6 +137,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
             ).then(res => {
                 localStorage.setItem("access_token", res.data["token"])
                 fetchAccessToken()
+                location.reload()
             }).catch(err => {
 
             })

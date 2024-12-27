@@ -1,14 +1,13 @@
 <template>
     <v-card
-        class="mx-auto"
-        width="400"
+        class="w-25"
         elevation="12"
     >
-        <v-card-text class="text-h4 text-center">
+        <v-card-text class="text-lg-h3 text-md-h4 text-center">
             {{ bankName }}
         </v-card-text>
-
-        <v-card-text class="text-h1 text-center">
+        <v-divider class="w-75 mx-auto"></v-divider>
+        <v-card-text class="text-lg-h1 text-md-h3 text-center">
             {{ remainingBalance }}
         </v-card-text>
     </v-card>

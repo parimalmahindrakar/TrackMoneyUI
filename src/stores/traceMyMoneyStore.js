@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from "axios";
+import { fetchAccessToken } from '@/helper/helper';
 
 export const traceMyMoneyStore = defineStore("traceMyMoney", {
     state: () => ({
@@ -15,6 +16,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         bankItems: [],
         initialExpenseEntriesList: [],
         expenseEntryCreationDate: '',
+        showLoginPage: true,
         TM_BACKEND_URL: import.meta.env.VITE_TM_BACKEND_URL,
     }),
     getters: {
@@ -30,6 +32,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         getBankItems: (state) => state.bankItems,
         getInitialExpenseEntriesList: (state) => state.initialExpenseEntriesList,
         getExpenseEntryCreationDate: (state) => state.expenseEntryCreationDate,
+        getLoginPageStatus: (state) => state.showLoginPage
     },
     actions: {
         setUserName(userName) {
@@ -37,6 +40,9 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         },
         setLoggedInStatus(status) {
             this.isLoggedIn = status
+        },
+        setLoginPageStatus(status) {
+            this.showLoginPage = status
         },
         async getInitialData() {
             const expensesResponse = await axios.get("expenses/",
@@ -123,6 +129,33 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     window.location.reload()
                 }
             })
+        },
+        async loginUser(data) {
+            axios.post("login",
+                data,
+                { baseURL: this.TM_BACKEND_URL }
+            ).then(res => {
+                localStorage.setItem("access_token", res.data["token"])
+                fetchAccessToken()
+            }).catch(err => {
+
+            })
+        },
+        async registerUser(data) {
+            axios.post("register",
+                data,
+                { baseURL: this.TM_BACKEND_URL }
+            ).then(res => {
+                if (res.status == 200) {
+                    location.reload()
+                }
+            }).catch(err => {
+
+            })
+        },
+        logoutUser() {
+            localStorage.removeItem("access_token")
+            location.reload()
         }
     }
 })

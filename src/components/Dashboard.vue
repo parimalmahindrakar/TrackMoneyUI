@@ -15,18 +15,24 @@
               <v-icon
                 icon="mdi-logout"
                 end
+                @click="logoutUser"
               ></v-icon>
             </span>
           </span>
           <div v-else>
-            <v-btn>Login</v-btn>
-            <v-btn>Register</v-btn>
+            <v-btn-toggle
+              color="success"
+              v-model="toggleLogin"
+            >
+              <v-btn @click="() => { setLoginPageStatus(true) } ">Login</v-btn>
+              <v-btn @click="() => { setLoginPageStatus(false) } ">Register</v-btn>
+            </v-btn-toggle>
           </div>
         </span>
       </div>
     </v-container>
   </v-app-bar>
-  <v-container class="mt-15">
+  <v-container class="mt-15" v-if="getLoggedInStatus">
     <div class="d-flex justify-space-between mt-8">
       <Bank
         v-for="(bank, index) in getBanksList"
@@ -220,6 +226,13 @@
       </div>
     </v-expansion-panels>
   </v-container>
+  <v-container class="mt-15" v-else>
+    <div class="mt-15 d-flex justify-center align-center">
+      <LoginVue v-if="getLoginPageStatus"/>
+      <RegisterVue v-if="!getLoginPageStatus"/>
+    </div>
+  </v-container>
+
 </template>
 
 <script>
@@ -229,21 +242,26 @@ import { mapActions, mapState } from 'pinia'
 import { traceMyMoneyStore } from "@/stores/traceMyMoneyStore";
 import { filterValidExpenses } from '../helper/helper'
 
+// components
+import LoginVue from './Login.vue';
+import RegisterVue from './Register.vue';
+
 export default {
   data() {
     return {
-      banksList: [],
-      expensesList: [],
       filteredExpensesList: reactive([]),
       expenseEntriesList: reactive([]),
       entryTags: [],
       newEntryTag: null,
       selectedBank: '',
-      items: [],
+      toggleLogin: 0,
       initialExpenseEntriesList: reactive([]),
-      expenseEntryCreationDate: '',
-      TM_BACKEND_URL: import.meta.env.VITE_TM_BACKEND_URL
+      expenseEntryCreationDate: ''
     }
+  },
+  components: {
+    LoginVue,
+    RegisterVue
   },
   computed: {
     ...mapState(traceMyMoneyStore, [
@@ -252,7 +270,8 @@ export default {
       "getExpenseEntryCreationDate",
       "getBanksList",
       "getExpensesList",
-      "getBankItems"
+      "getBankItems",
+      "getLoginPageStatus"
     ])
   },
   async created() {
@@ -268,7 +287,9 @@ export default {
       "deleteExpenseEnrty",
       "createNewTag",
       "submitExpense",
-      "submitExpenseEntry"
+      "submitExpenseEntry",
+      "logoutUser",
+      "setLoginPageStatus"
     ]),
 
     // API related functions
@@ -330,19 +351,19 @@ export default {
 </script>
 
 <style>
-.scrollable-panel {
-  max-height: 700px;
-  overflow-y: auto;
-}
-.hover-chip,.hover-entry-chip {
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
+  .scrollable-panel {
+    max-height: 700px;
+    overflow-y: auto;
+  }
+  .hover-chip,.hover-entry-chip {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
 
-.chip-container:hover .hover-chip {
-  opacity: 1;
-}
-.expense-entry:hover .hover-entry-chip {
-  opacity: 1;
-}
+  .chip-container:hover .hover-chip {
+    opacity: 1;
+  }
+  .expense-entry:hover .hover-entry-chip {
+    opacity: 1;
+  }
 </style>

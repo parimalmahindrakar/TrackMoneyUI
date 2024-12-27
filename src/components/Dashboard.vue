@@ -1,8 +1,35 @@
 <template>
-  <v-container class="mt-5">
-    <div class="d-flex justify-space-between">
+  <v-app-bar scroll-behavior="hide">
+    <v-container>
+      <div class="d-flex justify-space-between align-center">
+        <span class="text-h5">
+          Trace My Money
+        </span>
+        <span>
+          <span v-if="getLoggedInStatus">
+            Hello, {{ getUserName }}
+            <span
+              color="primary"
+              class="cursor-pointer"
+            >
+              <v-icon
+                icon="mdi-logout"
+                end
+              ></v-icon>
+            </span>
+          </span>
+          <div v-else>
+            <v-btn>Login</v-btn>
+            <v-btn>Register</v-btn>
+          </div>
+        </span>
+      </div>
+    </v-container>
+  </v-app-bar>
+  <v-container class="mt-15">
+    <div class="d-flex justify-space-between mt-8">
       <Bank
-        v-for="(bank, index) in banksList"
+        v-for="(bank, index) in getBanksList"
         :key="index"
         :bankName="bank.bankName"
         :remainingBalance="bank.remainingBalance"
@@ -28,7 +55,7 @@
                 <v-row class="w-100">
                   <v-col cols="6">
                     <v-select
-                      :items="items"
+                      :items="getBankItems"
                       v-model="selectedBank"
                       placeholder="Select the bank"
                     ></v-select>
@@ -36,7 +63,7 @@
                   <v-col cols="6">
                     <v-text-field
                       label="Add the date"
-                      v-model="expenseEntryCreationDate"
+                      v-model="getExpenseEntryCreationDate"
                     >
                     </v-text-field>
                   </v-col>
@@ -74,7 +101,7 @@
                       <v-chip
                         v-if="initialExpenseEntriesList.length >= 1"
                         class="ml-4 mt-3 cursor-pointer bg-dark w-25"
-                        @click="submitExpense">
+                        @click="submitExpenseSoft">
                         Submit
                       </v-chip>
                     </div>
@@ -118,7 +145,7 @@
                 <v-col class="d-flex justify-start align-center" cols="8">
                   {{(expense.created_at).slice(0, 10)}} | {{ expense.day }} @ {{expense.bank_name}}
                   <div>
-                    <v-chip size="x-small" class="ml-2 hover-chip" @click="deleteExpense(expense.id)">
+                    <v-chip size="x-small" class="ml-2 hover-chip" @click="deleteExpenseSoft(expense.id)">
                       <v-icon>mdi-delete</v-icon>
                     </v-chip>
                   </div>
@@ -145,7 +172,7 @@
               <div class="d-flex justify-space-between w-75 mx-auto align-center expense-entry">
                 <div class="ml-4 my-2">
                   {{item.description}}
-                  <v-chip size="x-small" class="ml-2 hover-entry-chip" @click="deleteExpenseEnrty(expense.id, item.ee_id)">
+                  <v-chip size="x-small" class="ml-2 hover-entry-chip" @click="deleteExpenseEnrtySoft(expense.id, item.ee_id)">
                     <v-icon>mdi-delete</v-icon>
                   </v-chip>
                 </div>
@@ -184,7 +211,7 @@
                 <v-chip
                   v-if="expenseEntriesList.length >= 1"
                   class="ml-4 mt-3 cursor-pointer bg-dark"
-                  @click="submitExpenseEntry(expense.id)">
+                  @click="submitExpenseEntrySoft(expense.id)">
                   Submit
                 </v-chip>
             </div>
@@ -198,6 +225,8 @@
 <script>
 import axios from "axios";
 import { reactive } from "vue";
+import { mapActions, mapState } from 'pinia'
+import { traceMyMoneyStore } from "@/stores/traceMyMoneyStore";
 import { filterValidExpenses } from '../helper/helper'
 
 export default {
@@ -205,7 +234,7 @@ export default {
     return {
       banksList: [],
       expensesList: [],
-      filteredExpensesList: [],
+      filteredExpensesList: reactive([]),
       expenseEntriesList: reactive([]),
       entryTags: [],
       newEntryTag: null,
@@ -216,85 +245,67 @@ export default {
       TM_BACKEND_URL: import.meta.env.VITE_TM_BACKEND_URL
     }
   },
-  async mounted() {
-    const expensesResponse = await axios.get("expenses/",
-                              { baseURL: this.TM_BACKEND_URL })
-    const banksResponse = await axios.get("banks/",
-                              { baseURL: this.TM_BACKEND_URL })
-    const tagsResponse = await axios.get("entry-tags/",
-                              { baseURL: this.TM_BACKEND_URL })
-    if (banksResponse.status == 200) {
-      this.banksList = banksResponse.data.banks.map(ele => ({
-        "bankName": ele.name,
-        "remainingBalance": ele.current_balance,
-        "bankId": ele.id
-      }))
-      this.items = this.banksList.map(ele => ({ title: ele.bankName, value: ele.bankId }))
-    }
-    if (expensesResponse.status == 200) {
-      this.expensesList = expensesResponse?.data?.expenses
-      this.filteredExpensesList = this.expensesList
-    }
-    if (tagsResponse.status == 200) {
-      this.entryTags = tagsResponse?.data?.entry_tags.map(ele => ele.name)
-    }
-    const date = new Date()
-    this.expenseEntryCreationDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} 00:00`
+  computed: {
+    ...mapState(traceMyMoneyStore, [
+      "getUserName",
+      "getLoggedInStatus",
+      "getExpenseEntryCreationDate",
+      "getBanksList",
+      "getExpensesList",
+      "getBankItems"
+    ])
+  },
+  async created() {
+    this.getInitialData()
+  },
+  mounted() {
+    this.filteredExpensesList = this.getExpensesList
   },
   methods: {
-    // TODO: make usable following method
-    formatDate(timestamp) {
-      return new Date(timestamp).toLocaleString().slice(1, 10)
-    },
-    handleBankClick(bank) {
-      this.filteredExpensesList = this.expensesList.filter(ele => ele.bank_name === bank.bankName)
-    },
-    async deleteExpense(id) {
-      const answer = confirm("Are you sure you wnat to delete this expense ?")
-      if (answer) {
-        const expensesResponse = await axios.delete("expenses/delete",
-          {
-            params: {
-              id: id
-            },
-            baseURL: this.TM_BACKEND_URL
-          }
-        )
-        if (expensesResponse.status == 204) {
-          window.location.reload()
-        }
-      }
-    },
-    async addTag(extraParam=null, e_id=null, ee_id=null){
-      if (this.newEntryTag) {
-        const entryTagsResponse = await axios.post("entry-tags/create",
-          { "name": this.newEntryTag },
-          { baseURL: this.TM_BACKEND_URL}
-        )
-        if (entryTagsResponse.status == 201) {
-          window.location.reload()
-        }
-      } else if (e_id !== null && ee_id !== null) {
+    ...mapActions(traceMyMoneyStore, [
+      "getInitialData",
+      "deleteExpense",
+      "deleteExpenseEnrty",
+      "createNewTag",
+      "submitExpense",
+      "submitExpenseEntry"
+    ]),
 
+    // API related functions
+    handleBankClick(bank) {
+      this.filteredExpensesList = this.getExpensesList.filter(ele => ele.bank_name === bank.bankName)
+    },
+    deleteExpenseSoft(expenseId) {
+      if (confirm("Are you sure you want to delete this expense ?")) {
+        this.deleteExpense(expenseId)
       }
     },
-    async deleteExpenseEnrty(expenseId, expenseEntryId) {
-      const answer = confirm("Are you sure you wnat to delete this entry ?")
-      if (answer) {
-        const expensesResponse = await axios.delete("expenses/delete-entry",
-          {
-            params: {
-              id: expenseId,
-              ee_id: expenseEntryId
-            },
-            baseURL: this.TM_BACKEND_URL
-          }
-        )
-        if (expensesResponse.status == 204) {
-          window.location.reload()
-        }
+    deleteExpenseEnrtySoft(expenseId, expenseEntryId) {
+      if (confirm("Are you sure you wnat to delete this entry ?")) {
+        this.deleteExpenseEnrty(expenseId, expenseEntryId)
       }
     },
+    addTag(extraParam=null, e_id=null, ee_id=null){
+      if (this.newEntryTag) {
+        this.createNewTag(this.newEntryTag)
+      } else if (e_id !== null && ee_id !== null) {
+        // TODO: for future purpose
+      }
+    },
+    submitExpenseSoft() {
+      const data = {
+        "bank_id": this.selectedBank,
+        "expenses": filterValidExpenses(this.initialExpenseEntriesList),
+        "created_at": this.expenseEntryCreationDate
+      }
+      this.submitExpense(data)
+    },
+    submitExpenseEntrySoft(expenseId) {
+      const filterdExpenseEntries = filterValidExpenses(this.expenseEntriesList)
+      this.submitExpenseEntry(expenseId, filterdExpenseEntries)
+    },
+
+    // UI related functions
     addExpenseEntry() {
       this.expenseEntriesList.push({
         "amount": null,
@@ -304,21 +315,6 @@ export default {
     removeExpenseEntry(counter) {
       this.expenseEntriesList.splice(counter, 1)
     },
-    submitExpenseEntry(_id) {
-      axios.patch("expenses/add-entry",
-        filterValidExpenses(this.expenseEntriesList),
-        {
-          params: {
-            id: _id
-          },
-          baseURL: this.TM_BACKEND_URL
-        }
-      ).then(res => {
-        if (res.status ==  201) {
-          window.location.reload()
-        }
-      })
-    },
     addInitialExpenseEntry() {
       this.initialExpenseEntriesList.push({
         "amount": null,
@@ -327,21 +323,6 @@ export default {
     },
     removeInitialExpenseEntry(counter) {
       this.initialExpenseEntriesList.splice(counter, 1)
-    },
-    submitExpense() {
-      const data =  {
-        "bank_id": this.selectedBank,
-        "expenses": filterValidExpenses(this.initialExpenseEntriesList),
-        "created_at": this.expenseEntryCreationDate
-      }
-      axios.post("expenses/create",
-        data,
-        { baseURL: this.TM_BACKEND_URL }
-      ).then(res => {
-        if (res.status ==  201) {
-          window.location.reload()
-        }
-      })
     }
   }
 }

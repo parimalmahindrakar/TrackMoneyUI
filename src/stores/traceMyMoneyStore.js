@@ -56,7 +56,11 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 axios.get(`${this.TM_BACKEND_URL}expenses/`),
                 axios.get(`${this.TM_BACKEND_URL}entry-tags/`),
             ]).catch(error => {
-                console.log(error)
+                if (error.status == 401) {
+                    // token might be expired hence removing if exists
+                    localStorage.removeItem("access_token")
+                    fetchAccessToken()
+                }
             })
             if(responses){
                 this.banksList = responses[0].data?.banks.map(ele => ({

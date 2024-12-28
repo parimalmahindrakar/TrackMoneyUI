@@ -141,7 +141,7 @@
       </div>
       <div class="scrollable-panel w-100">
         <v-expansion-panel
-          v-for="expense in filteredExpensesList"
+          v-for="expense in getFilteredExpensesList"
           :key="expense"
           class="chip-container"
         >
@@ -249,7 +249,6 @@ import RegisterVue from './Register.vue';
 export default {
   data() {
     return {
-      filteredExpensesList: reactive([]),
       expenseEntriesList: reactive([]),
       entryTags: [],
       newEntryTag: null,
@@ -271,14 +270,12 @@ export default {
       "getBanksList",
       "getExpensesList",
       "getBankItems",
-      "getLoginPageStatus"
+      "getLoginPageStatus",
+      "getFilteredExpensesList"
     ])
   },
   async created() {
     this.getInitialData()
-  },
-  mounted() {
-    this.filteredExpensesList = this.getExpensesList
   },
   methods: {
     ...mapActions(traceMyMoneyStore, [
@@ -289,12 +286,13 @@ export default {
       "submitExpense",
       "submitExpenseEntry",
       "logoutUser",
-      "setLoginPageStatus"
+      "setLoginPageStatus",
+      "setFilteredExpensesList"
     ]),
 
     // API related functions
     handleBankClick(bank) {
-      this.filteredExpensesList = this.getExpensesList.filter(ele => ele.bank_name === bank.bankName)
+      this.setFilteredExpensesList(bank)
     },
     deleteExpenseSoft(expenseId) {
       if (confirm("Are you sure you want to delete this expense ?")) {

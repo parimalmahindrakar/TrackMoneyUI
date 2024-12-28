@@ -52,9 +52,9 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
             this.expenseEntryCreationDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} 00:00`
 
             const responses = await Promise.all([
-                axios.get(`${this.TM_BACKEND_URL}/banks/`),
-                axios.get(`${this.TM_BACKEND_URL}/expenses/`),
-                axios.get(`${this.TM_BACKEND_URL}/entry-tags/`),
+                axios.get(`${this.TM_BACKEND_URL}banks/`),
+                axios.get(`${this.TM_BACKEND_URL}expenses/`),
+                axios.get(`${this.TM_BACKEND_URL}entry-tags/`),
             ]).catch(error => {
                 console.log(error)
             })

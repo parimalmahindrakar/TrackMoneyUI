@@ -130,7 +130,7 @@
               <v-expansion-panel-text>
                 <v-combobox
                   clearable
-                  :items="entryTags"
+                  :items="getEntryTags"
                   v-model="newEntryTag"
                 ></v-combobox>
                 <v-btn class="w-100" @click="addTag">Submit</v-btn>
@@ -250,7 +250,6 @@ export default {
   data() {
     return {
       expenseEntriesList: reactive([]),
-      entryTags: [],
       newEntryTag: null,
       selectedBank: '',
       toggleLogin: 0,
@@ -271,7 +270,8 @@ export default {
       "getExpensesList",
       "getBankItems",
       "getLoginPageStatus",
-      "getFilteredExpensesList"
+      "getFilteredExpensesList",
+      "getEntryTags"
     ])
   },
   async created() {

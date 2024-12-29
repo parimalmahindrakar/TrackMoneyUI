@@ -197,7 +197,7 @@
                     <v-icon>mdi-delete</v-icon>
                   </v-chip>
                 </div>
-                <div class="mr-4 ">{{item.amount}}/-</div>
+                <div class="mr-4 ">{{ item.amount < 0 ? `${Math.abs(item.amount)} added`: `${item.amount} subtracted` }}/-</div>
               </div>
               <v-divider class="w-75 mx-auto"></v-divider>
             </div>
@@ -251,11 +251,10 @@
 </template>
 
 <script>
-import axios from "axios";
 import { reactive } from "vue";
 import { mapActions, mapState } from 'pinia'
 import { traceMyMoneyStore } from "@/stores/traceMyMoneyStore";
-import { filterValidExpenses } from '../helper/helper'
+import { filterValidExpenses, toggleMoneyString } from '../helper/helper'
 
 // components
 import LoginVue from './Login.vue';

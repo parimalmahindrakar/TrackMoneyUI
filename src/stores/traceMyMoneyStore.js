@@ -17,6 +17,8 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         initialExpenseEntriesList: [],
         expenseEntryCreationDate: '',
         showLoginPage: true,
+        showAlert: false,
+        alertErrorMessages: [],
         TM_BACKEND_URL: import.meta.env.VITE_TM_BACKEND_URL,
     }),
     getters: {
@@ -32,7 +34,9 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         getBankItems: (state) => state.bankItems,
         getInitialExpenseEntriesList: (state) => state.initialExpenseEntriesList,
         getExpenseEntryCreationDate: (state) => state.expenseEntryCreationDate,
-        getLoginPageStatus: (state) => state.showLoginPage
+        getLoginPageStatus: (state) => state.showLoginPage,
+        getShowAlert: (state) => state.showAlert,
+        getAlertErrorMessages: (state) => state.alertErrorMessages
     },
     actions: {
         setUserName(userName) {
@@ -47,6 +51,15 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         setFilteredExpensesList(bank) {
             this.filteredExpensesList = this.getExpensesList.filter(ele => ele.bank_name === bank.bankName)
         },
+        setShowAlert(status) {
+            this.showAlert = status
+        },
+        setAlertErrorMessages(errorMessages) {
+            this.alertErrorMessages = errorMessages
+        },
+        setExpenseEntryCreationDate(changedDate) {
+            this.expenseEntryCreationDate = changedDate
+        },
         async getInitialData() {
             const date = new Date()
             this.expenseEntryCreationDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} 00:00`
@@ -57,8 +70,12 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 axios.get(`${this.TM_BACKEND_URL}entry-tags/`),
             ]).catch(error => {
                 if (error.status == 401) {
+                    if (localStorage.getItem("access_token")) {
+                        localStorage.removeItem("access_token")
+                        this.showAlert = true
+                        this.alertErrorMessages.push("Please login")
+                    }
                     // token might be expired hence removing if exists
-                    localStorage.removeItem("access_token")
                     fetchAccessToken()
                 }
             })

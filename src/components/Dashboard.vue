@@ -1,4 +1,19 @@
 <template>
+   <v-alert
+      v-model="getShowAlert"
+      dismissible
+      color="red"
+      border="left"
+      elevation="2"
+      colored-border
+      closable
+      class="v_alert_changes w-lg-25 w-50"
+      v-for="(alertMessage, index) in getAlertErrorMessages"
+      :key="index"
+    >
+      {{ alertMessage }}
+    </v-alert>
+
   <v-app-bar scroll-behavior="hide">
     <v-container>
       <div class="d-flex justify-space-between align-center">
@@ -70,6 +85,7 @@
                     <v-text-field
                       label="Add the date"
                       v-model="getExpenseEntryCreationDate"
+                      @update:modelValue="changeExpenseEntryCreationDate"
                     >
                     </v-text-field>
                   </v-col>
@@ -271,7 +287,9 @@ export default {
       "getBankItems",
       "getLoginPageStatus",
       "getFilteredExpensesList",
-      "getEntryTags"
+      "getEntryTags",
+      "getShowAlert",
+      "getAlertErrorMessages"
     ])
   },
   async created() {
@@ -287,7 +305,8 @@ export default {
       "submitExpenseEntry",
       "logoutUser",
       "setLoginPageStatus",
-      "setFilteredExpensesList"
+      "setFilteredExpensesList",
+      "setExpenseEntryCreationDate"
     ]),
 
     // API related functions
@@ -342,6 +361,9 @@ export default {
     },
     removeInitialExpenseEntry(counter) {
       this.initialExpenseEntriesList.splice(counter, 1)
+    },
+    changeExpenseEntryCreationDate(chagnedDate) {
+      this.setExpenseEntryCreationDate(chagnedDate)
     }
   }
 }
@@ -363,5 +385,14 @@ export default {
   }
   .expense-entry:hover .hover-entry-chip {
     opacity: 1;
+  }
+  .v_alert_changes {
+    margin-top: 70px;
+    height: 55px !important;
+    position: absolute !important;
+    z-index: 1000;
+    right: 0px;
+    display: flex;
+    align-content: center;
   }
 </style>

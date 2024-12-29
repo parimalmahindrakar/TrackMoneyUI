@@ -61,70 +61,90 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
             this.expenseEntryCreationDate = changedDate
         },
         async getInitialData() {
-            const date = new Date()
-            this.expenseEntryCreationDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} 00:00`
+            if (this.isLoggedIn) {
+                const date = new Date()
+                this.expenseEntryCreationDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} 00:00`
 
-            const responses = await Promise.all([
-                axios.get(`${this.TM_BACKEND_URL}banks/`),
-                axios.get(`${this.TM_BACKEND_URL}expenses/`),
-                axios.get(`${this.TM_BACKEND_URL}entry-tags/`),
-            ]).catch(error => {
-                if (error.status == 401) {
-                    if (localStorage.getItem("access_token")) {
-                        localStorage.removeItem("access_token")
-                        this.showAlert = true
-                        this.alertErrorMessages.push("Please login")
+                const responses = await Promise.all([
+                    axios.get(`${this.TM_BACKEND_URL}banks/`),
+                    axios.get(`${this.TM_BACKEND_URL}expenses/`),
+                    axios.get(`${this.TM_BACKEND_URL}entry-tags/`),
+                ]).catch(error => {
+                    if (error.status == 401) {
+                        if (localStorage.getItem("access_token")) {
+                            localStorage.removeItem("access_token")
+                            this.showAlert = true
+                            this.alertErrorMessages.push("Please login")
+                        }
+                        // token might be expired hence removing if exists
+                        fetchAccessToken()
                     }
-                    // token might be expired hence removing if exists
-                    fetchAccessToken()
+                })
+                if(responses){
+                    this.banksList = responses[0].data?.banks.map(ele => ({
+                        "bankName": ele.name,
+                        "remainingBalance": ele.current_balance,
+                        "bankId": ele.id
+                    }));
+                    this.expensesList = responses[1].data?.expenses
+                    this.entryTags = responses[2].data?.entry_tags.map(ele => ele.name);
+                    this.filteredExpensesList = this.expensesList
+                    this.bankItems = this.banksList.map(ele => ({ title: ele.bankName, value: ele.bankId }))
                 }
-            })
-            if(responses){
-                this.banksList = responses[0].data?.banks.map(ele => ({
-                    "bankName": ele.name,
-                    "remainingBalance": ele.current_balance,
-                    "bankId": ele.id
-                }));
-                this.expensesList = responses[1].data?.expenses
-                this.entryTags = responses[2].data?.entry_tags.map(ele => ele.name);
-                this.filteredExpensesList = this.expensesList
-                this.bankItems = this.banksList.map(ele => ({ title: ele.bankName, value: ele.bankId }))
             }
         },
         async deleteExpense(expenseId) {
-            const expensesResponse = await axios.delete("expenses/delete",
-                {
-                    params: {
-                        id: expenseId
-                    },
-                    baseURL: this.TM_BACKEND_URL
+            try {
+                const expensesResponse = await axios.delete("expenses/delete",
+                    {
+                        params: {
+                            id: expenseId
+                        },
+                        baseURL: this.TM_BACKEND_URL
+                    }
+                )
+                if (expensesResponse.status == 204) {
+                    window.location.reload()
                 }
-            )
-            if (expensesResponse.status == 204) {
-                window.location.reload()
+            } catch(err) {
+                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showAlert = true
+                this.alertErrorMessages.push(pushToData)
             }
         },
         async deleteExpenseEnrty(expenseId, expenseEntryId) {
-            const expensesResponse = await axios.delete("expenses/delete-entry",
-                {
-                    params: {
-                    id: expenseId,
-                    ee_id: expenseEntryId
-                    },
-                    baseURL: this.TM_BACKEND_URL
+            try {
+                const expensesResponse = await axios.delete("expenses/delete-entry",
+                    {
+                        params: {
+                            id: expenseId,
+                            ee_id: expenseEntryId
+                        },
+                        baseURL: this.TM_BACKEND_URL
+                    }
+                )
+                if (expensesResponse.status == 204) {
+                    window.location.reload()
                 }
-            )
-            if (expensesResponse.status == 204) {
-                window.location.reload()
+            } catch(err) {
+                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showAlert = true
+                this.alertErrorMessages.push(pushToData)
             }
         },
         async createNewTag(tagName) {
-            const entryTagsResponse = await axios.post("entry-tags/create",
-                { "name": tagName },
-                { baseURL: this.TM_BACKEND_URL }
-            )
-            if (entryTagsResponse.status == 201) {
-                window.location.reload()
+            try {
+                const entryTagsResponse = await axios.post("entry-tags/create",
+                    { "name": tagName },
+                    { baseURL: this.TM_BACKEND_URL }
+                )
+                if (entryTagsResponse.status == 201) {
+                    window.location.reload()
+                }
+            } catch(err) {
+                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showAlert = true
+                this.alertErrorMessages.push(pushToData)
             }
         },
         async submitExpenseEntry(expenseId, expenseEntriesList){
@@ -140,6 +160,10 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 if (res.status ==  201) {
                     window.location.reload()
                 }
+            }).catch(err => {
+                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showAlert = true
+                this.alertErrorMessages.push(pushToData)
             })
         },
         async submitExpense(data) {
@@ -151,6 +175,10 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 if (res.status ==  201) {
                     window.location.reload()
                 }
+            }).catch(err => {
+                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showAlert = true
+                this.alertErrorMessages.push(pushToData)
             })
         },
         async loginUser(data) {
@@ -162,7 +190,9 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 fetchAccessToken()
                 location.reload()
             }).catch(err => {
-
+                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showAlert = true
+                this.alertErrorMessages.push(pushToData)
             })
         },
         async registerUser(data) {
@@ -174,7 +204,17 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     location.reload()
                 }
             }).catch(err => {
+                let pushToData = err?.message
+                if (err.status == 400 && Array.isArray(err?.response?.data?.errors)) {
+                    const errorResponse = err?.response?.data?.errors[0]
+                    const errorResponseMessage = Object.keys(errorResponse)
+                            .map(field => `${field.charAt(0).toUpperCase() + field.slice(1)}: ${errorResponse[field]}`)
+                            .join(", ")
+                    pushToData = errorResponseMessage
+                }
 
+                this.showAlert = true
+                this.alertErrorMessages.push(pushToData)
             })
         },
         logoutUser() {

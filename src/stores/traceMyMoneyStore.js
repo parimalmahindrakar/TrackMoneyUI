@@ -143,6 +143,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
             })
         },
         async submitExpense(data) {
+            data["created_at"] = this.expenseEntryCreationDate
             axios.post("expenses/create",
                 data,
                 { baseURL: this.TM_BACKEND_URL }

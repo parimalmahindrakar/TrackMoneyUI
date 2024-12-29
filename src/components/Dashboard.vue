@@ -269,8 +269,7 @@ export default {
       newEntryTag: null,
       selectedBank: '',
       toggleLogin: 0,
-      initialExpenseEntriesList: reactive([]),
-      expenseEntryCreationDate: ''
+      initialExpenseEntriesList: reactive([])
     }
   },
   components: {
@@ -334,7 +333,6 @@ export default {
       const data = {
         "bank_id": this.selectedBank,
         "expenses": filterValidExpenses(this.initialExpenseEntriesList),
-        "created_at": this.expenseEntryCreationDate
       }
       this.submitExpense(data)
     },

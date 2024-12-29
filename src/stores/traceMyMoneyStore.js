@@ -17,6 +17,8 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         initialExpenseEntriesList: [],
         expenseEntryCreationDate: '',
         showLoginPage: true,
+        showAlert: false,
+        alertErrorMessages: [],
         TM_BACKEND_URL: import.meta.env.VITE_TM_BACKEND_URL,
     }),
     getters: {
@@ -32,7 +34,9 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         getBankItems: (state) => state.bankItems,
         getInitialExpenseEntriesList: (state) => state.initialExpenseEntriesList,
         getExpenseEntryCreationDate: (state) => state.expenseEntryCreationDate,
-        getLoginPageStatus: (state) => state.showLoginPage
+        getLoginPageStatus: (state) => state.showLoginPage,
+        getShowAlert: (state) => state.showAlert,
+        getAlertErrorMessages: (state) => state.alertErrorMessages
     },
     actions: {
         setUserName(userName) {
@@ -44,30 +48,48 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         setLoginPageStatus(status) {
             this.showLoginPage = status
         },
+        setFilteredExpensesList(bank) {
+            this.filteredExpensesList = this.getExpensesList.filter(ele => ele.bank_name === bank.bankName)
+        },
+        setShowAlert(status) {
+            this.showAlert = status
+        },
+        setAlertErrorMessages(errorMessages) {
+            this.alertErrorMessages = errorMessages
+        },
+        setExpenseEntryCreationDate(changedDate) {
+            this.expenseEntryCreationDate = changedDate
+        },
         async getInitialData() {
-            const expensesResponse = await axios.get("expenses/",
-                              { baseURL: this.TM_BACKEND_URL })
-            const banksResponse = await axios.get("banks/",
-                                    { baseURL: this.TM_BACKEND_URL })
-            const tagsResponse = await axios.get("entry-tags/",
-                                    { baseURL: this.TM_BACKEND_URL })
-            if (banksResponse.status == 200) {
-                this.banksList = banksResponse.data.banks.map(ele => ({
+            const date = new Date()
+            this.expenseEntryCreationDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} 00:00`
+
+            const responses = await Promise.all([
+                axios.get(`${this.TM_BACKEND_URL}banks/`),
+                axios.get(`${this.TM_BACKEND_URL}expenses/`),
+                axios.get(`${this.TM_BACKEND_URL}entry-tags/`),
+            ]).catch(error => {
+                if (error.status == 401) {
+                    if (localStorage.getItem("access_token")) {
+                        localStorage.removeItem("access_token")
+                        this.showAlert = true
+                        this.alertErrorMessages.push("Please login")
+                    }
+                    // token might be expired hence removing if exists
+                    fetchAccessToken()
+                }
+            })
+            if(responses){
+                this.banksList = responses[0].data?.banks.map(ele => ({
                     "bankName": ele.name,
                     "remainingBalance": ele.current_balance,
                     "bankId": ele.id
-                }))
+                }));
+                this.expensesList = responses[1].data?.expenses
+                this.entryTags = responses[2].data?.entry_tags.map(ele => ele.name);
+                this.filteredExpensesList = this.expensesList
                 this.bankItems = this.banksList.map(ele => ({ title: ele.bankName, value: ele.bankId }))
             }
-            if (expensesResponse.status == 200) {
-                this.expensesList = expensesResponse?.data?.expenses
-                this.filteredExpensesList = this.expensesList
-            }
-            if (tagsResponse.status == 200) {
-                this.entryTags = tagsResponse?.data?.entry_tags.map(ele => ele.name)
-            }
-            const date = new Date()
-            this.expenseEntryCreationDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} 00:00`
         },
         async deleteExpense(expenseId) {
             const expensesResponse = await axios.delete("expenses/delete",
@@ -121,6 +143,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
             })
         },
         async submitExpense(data) {
+            data["created_at"] = this.expenseEntryCreationDate
             axios.post("expenses/create",
                 data,
                 { baseURL: this.TM_BACKEND_URL }
@@ -137,6 +160,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
             ).then(res => {
                 localStorage.setItem("access_token", res.data["token"])
                 fetchAccessToken()
+                location.reload()
             }).catch(err => {
 
             })

@@ -1,13 +1,12 @@
 <template>
    <v-alert
-      v-model="getShowAlert"
       dismissible
       color="red"
       border="left"
       elevation="2"
       colored-border
       closable
-      class="v_alert_changes w-lg-25 w-50"
+      :class="['v_alert_changes', 'w-lg-25', 'w-50', { 'make-opacity': getShowAlert }]"
       v-for="(alertMessage, index) in getAlertErrorMessages"
       :key="index"
     >
@@ -385,12 +384,17 @@ export default {
     opacity: 1;
   }
   .v_alert_changes {
-    margin-top: 70px;
-    height: 55px !important;
     position: absolute !important;
-    z-index: 1000;
-    right: 0px;
-    display: flex;
-    align-content: center;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 60px;
+    z-index: 10000;
+    opacity: 0;
+    transition: top 0.5s ease, opacity 0.5s ease;
+  }
+  .make-opacity{
+    opacity: 1;
   }
 </style>

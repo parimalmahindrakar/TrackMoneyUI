@@ -1,4 +1,19 @@
 <template>
+   <v-alert
+      v-model="getShowAlert"
+      dismissible
+      color="red"
+      border="left"
+      elevation="2"
+      colored-border
+      closable
+      class="v_alert_changes w-lg-25 w-50"
+      v-for="(alertMessage, index) in getAlertErrorMessages"
+      :key="index"
+    >
+      {{ alertMessage }}
+    </v-alert>
+
   <v-app-bar scroll-behavior="hide">
     <v-container>
       <div class="d-flex justify-space-between align-center">
@@ -70,6 +85,7 @@
                     <v-text-field
                       label="Add the date"
                       v-model="getExpenseEntryCreationDate"
+                      @update:modelValue="changeExpenseEntryCreationDate"
                     >
                     </v-text-field>
                   </v-col>
@@ -130,7 +146,7 @@
               <v-expansion-panel-text>
                 <v-combobox
                   clearable
-                  :items="entryTags"
+                  :items="getEntryTags"
                   v-model="newEntryTag"
                 ></v-combobox>
                 <v-btn class="w-100" @click="addTag">Submit</v-btn>
@@ -141,7 +157,7 @@
       </div>
       <div class="scrollable-panel w-100">
         <v-expansion-panel
-          v-for="expense in filteredExpensesList"
+          v-for="expense in getFilteredExpensesList"
           :key="expense"
           class="chip-container"
         >
@@ -249,14 +265,11 @@ import RegisterVue from './Register.vue';
 export default {
   data() {
     return {
-      filteredExpensesList: reactive([]),
       expenseEntriesList: reactive([]),
-      entryTags: [],
       newEntryTag: null,
       selectedBank: '',
       toggleLogin: 0,
-      initialExpenseEntriesList: reactive([]),
-      expenseEntryCreationDate: ''
+      initialExpenseEntriesList: reactive([])
     }
   },
   components: {
@@ -271,14 +284,15 @@ export default {
       "getBanksList",
       "getExpensesList",
       "getBankItems",
-      "getLoginPageStatus"
+      "getLoginPageStatus",
+      "getFilteredExpensesList",
+      "getEntryTags",
+      "getShowAlert",
+      "getAlertErrorMessages"
     ])
   },
   async created() {
     this.getInitialData()
-  },
-  mounted() {
-    this.filteredExpensesList = this.getExpensesList
   },
   methods: {
     ...mapActions(traceMyMoneyStore, [
@@ -289,12 +303,14 @@ export default {
       "submitExpense",
       "submitExpenseEntry",
       "logoutUser",
-      "setLoginPageStatus"
+      "setLoginPageStatus",
+      "setFilteredExpensesList",
+      "setExpenseEntryCreationDate"
     ]),
 
     // API related functions
     handleBankClick(bank) {
-      this.filteredExpensesList = this.getExpensesList.filter(ele => ele.bank_name === bank.bankName)
+      this.setFilteredExpensesList(bank)
     },
     deleteExpenseSoft(expenseId) {
       if (confirm("Are you sure you want to delete this expense ?")) {
@@ -317,7 +333,6 @@ export default {
       const data = {
         "bank_id": this.selectedBank,
         "expenses": filterValidExpenses(this.initialExpenseEntriesList),
-        "created_at": this.expenseEntryCreationDate
       }
       this.submitExpense(data)
     },
@@ -344,6 +359,9 @@ export default {
     },
     removeInitialExpenseEntry(counter) {
       this.initialExpenseEntriesList.splice(counter, 1)
+    },
+    changeExpenseEntryCreationDate(chagnedDate) {
+      this.setExpenseEntryCreationDate(chagnedDate)
     }
   }
 }
@@ -365,5 +383,14 @@ export default {
   }
   .expense-entry:hover .hover-entry-chip {
     opacity: 1;
+  }
+  .v_alert_changes {
+    margin-top: 70px;
+    height: 55px !important;
+    position: absolute !important;
+    z-index: 1000;
+    right: 0px;
+    display: flex;
+    align-content: center;
   }
 </style>

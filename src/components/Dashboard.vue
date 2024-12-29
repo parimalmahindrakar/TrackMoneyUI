@@ -197,7 +197,7 @@
                     <v-icon>mdi-delete</v-icon>
                   </v-chip>
                 </div>
-                <div class="mr-4 ">{{ item.amount < 0 ? `${Math.abs(item.amount)} added`: `${item.amount} subtracted` }}/-</div>
+                <div class="mr-4 ">{{ item.amount < 0 ? `${Math.abs(item.amount)}/- added`: `${item.amount}/- subtracted` }}</div>
               </div>
               <v-divider class="w-75 mx-auto"></v-divider>
             </div>

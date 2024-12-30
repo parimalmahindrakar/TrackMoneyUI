@@ -37,9 +37,10 @@
             <v-btn-toggle
               color="success"
               v-model="toggleLogin"
+              class="custom-btn-toggle"
             >
-              <v-btn @click="() => { setLoginPageStatus(true) } ">Login</v-btn>
-              <v-btn @click="() => { setLoginPageStatus(false) } ">Register</v-btn>
+              <v-btn @click="() => { setLoginPageStatus(true) }" class="custom-btn">Login</v-btn>
+              <v-btn @click="() => { setLoginPageStatus(false) }" class="custom-btn">Register</v-btn>
             </v-btn-toggle>
           </div>
         </span>
@@ -437,5 +438,21 @@ export default {
   }
   .w-80 {
     width: 80%;
+  }
+  .custom-btn-toggle {
+    display: flex;
+    flex-direction: row;
+  }
+  .custom-btn {
+    font-size: 16px;
+  }
+  @media (max-width: 600px) {
+    .custom-btn-toggle {
+      flex-direction: column;
+    }
+    .custom-btn {
+      font-size: 12px;
+      padding: 6px 12px;
+    }
   }
 </style>

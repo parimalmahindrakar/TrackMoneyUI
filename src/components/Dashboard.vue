@@ -1,22 +1,22 @@
 <template>
-   <v-alert
-      dismissible
-      color="red"
-      border="left"
-      elevation="2"
-      colored-border
-      closable
-      :class="['v_alert_changes', 'w-lg-25', 'w-50', { 'make-opacity': getShowAlert }]"
-      v-for="(alertMessage, index) in getAlertErrorMessages"
-      :key="index"
-    >
-      {{ alertMessage }}
-    </v-alert>
+  <v-alert
+    dismissible
+    color="red"
+    border="left"
+    elevation="2"
+    colored-border
+    closable
+    :class="['v_alert_changes', 'w-lg-25', 'w-80', { 'make-opacity': getShowAlert }]"
+    v-for="(alertMessage, index) in getAlertErrorMessages"
+    :key="index"
+  >
+    {{ alertMessage }}
+  </v-alert>
 
   <v-app-bar scroll-behavior="hide">
     <v-container>
       <div class="d-flex justify-space-between align-center">
-        <span class="text-h5">
+        <span class="text-sm-h5 text-md-h4 text-h6">
           Trace My Money
         </span>
         <span>
@@ -47,21 +47,35 @@
     </v-container>
   </v-app-bar>
   <v-container class="mt-15" v-if="getLoggedInStatus">
-    <div class="d-flex justify-space-between mt-8">
-      <Bank
+    <v-carousel
+      v-model="currentSlide"
+      :cycle="false"
+      :show-arrows="true"
+      :interval="5000"
+      height="auto"
+      class="mb-8"
+    >
+      <v-carousel-item
         v-for="(bank, index) in getBanksList"
         :key="index"
-        :bankName="bank.bankName"
-        :remainingBalance="bank.remainingBalance"
-        @click="handleBankClick(bank)"
-      />
-    </div>
-    <v-divider class="my-10" thickness="2" color="black"></v-divider>
+      >
+        <v-card class="pa-4" @click="handleBankClick(bank)">
+          <v-row>
+            <v-col cols="12" class="text-center">
+              <v-card-title class="text-h2">{{ bank.bankName }}</v-card-title>
+            </v-col>
+            <v-col cols="12" class="text-center">
+              <v-card-subtitle class="text-h2">{{ bank.remainingBalance }}</v-card-subtitle>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-carousel-item>
+    </v-carousel>
     <v-expansion-panels>
       <div class="w-100 d-flex">
         <v-row>
-          <v-col cols="9">
-            <v-expansion-panel class="chip-container mb-10">
+          <v-col cols="12">
+            <v-expansion-panel class="chip-container">
               <v-expansion-panel-title>
                 <template v-slot:default="{ expanded }">
                   <v-row no-gutters>
@@ -72,27 +86,23 @@
                 </template>
               </v-expansion-panel-title>
               <v-expansion-panel-text>
-                <v-row class="w-100">
-                  <v-col cols="6">
-                    <v-select
-                      :items="getBankItems"
-                      v-model="selectedBank"
-                      placeholder="Select the bank"
-                    ></v-select>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-text-field
-                      label="Add the date"
-                      v-model="getExpenseEntryCreationDate"
-                      @update:modelValue="changeExpenseEntryCreationDate"
-                    >
-                    </v-text-field>
-                  </v-col>
-                </v-row>
+                <div class="d-flex flex-column mt-3">
+                  <v-select
+                    :items="getBankItems"
+                    v-model="selectedBank"
+                    placeholder="Select the bank"
+                    class="w-100"
+                  ></v-select>
+                  <v-text-field
+                    label="Add the date"
+                    v-model="getExpenseEntryCreationDate"
+                    @update:modelValue="changeExpenseEntryCreationDate"
+                  ></v-text-field>
+                </div>
                 <div class="d-flex justify-center align-center">
-                  <div class="w-75 mx-auto mt-3">
+                  <div class="w-100 mx-auto">
                     <template v-for="item, index in initialExpenseEntriesList" :key="index">
-                      <v-row class="mx-2">
+                      <v-row class="mx-1">
                         <v-col cols="3">
                           <v-text-field
                             v-model="item.amount"
@@ -118,20 +128,28 @@
                       </v-row>
                     </template>
                     <div class="d-flex justify-center align-center">
-                      <v-chip class="ml-4 mt-3 cursor-pointer bg-dark w-25 text-center" @click="addInitialExpenseEntry(e)">+ Add entry</v-chip>
-                      <v-chip
+                      <v-btn
+                        rounded
+                        variant="tonal"
+                        class=" mt-3 cursor-pointer bg-dark w-50 text-center"
+                        @click="addInitialExpenseEntry(e)">
+                        + Add entry
+                      </v-btn>
+                      <v-btn
+                        rounded
+                        variant="tonal"
                         v-if="initialExpenseEntriesList.length >= 1"
-                        class="ml-4 mt-3 cursor-pointer bg-dark w-25"
+                        class="ml-4 mt-3 cursor-pointer bg-dark w-50"
                         @click="submitExpenseSoft">
                         Submit
-                      </v-chip>
+                      </v-btn>
                     </div>
                   </div>
                 </div>
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-col>
-          <v-col cols="3">
+          <v-col cols="12">
             <v-expansion-panel class="chip-container mb-10">
               <v-expansion-panel-title>
                 <template v-slot:default="{ expanded }">
@@ -145,6 +163,7 @@
               <v-expansion-panel-text>
                 <v-combobox
                   clearable
+                  placeholder="Enter the name of tag"
                   :items="getEntryTags"
                   v-model="newEntryTag"
                 ></v-combobox>
@@ -163,7 +182,7 @@
           <v-expansion-panel-title>
             <template v-slot:default="{ expanded }">
               <v-row no-gutters>
-                <v-col class="d-flex justify-start align-center" cols="8">
+                <v-col class="d-flex justify-space-between align-center" cols="12">
                   {{(expense.created_at).slice(0, 10)}} | {{ expense.day }} @ {{expense.bank_name}}
                   <div>
                     <v-chip size="x-small" class="ml-2 hover-chip" @click="deleteExpenseSoft(expense.id)">
@@ -171,39 +190,41 @@
                     </v-chip>
                   </div>
                 </v-col>
-                <v-col
-                  cols="2"
-                  class="text-center"
-                >
-                  <span class="font-weight-bold">{{expense.remaining_amount_till_now}}/-</span>
-                </v-col>
-                <v-col
-                  cols="2"
-                  class="text-center"
-                >
-                  <span class="font-weight-bold">{{expense.expense_total}}/-</span>
+                <v-col cols="12" class="d-flex mt-2 justify-space-between">
+                    <span class="font-weight-bold">Remaining : {{expense.remaining_amount_till_now}}/-</span>
+                    <span class="font-weight-bold"> {{expense.expense_total}}/-</span>
                 </v-col>
               </v-row>
             </template>
           </v-expansion-panel-title>
 
           <v-expansion-panel-text>
-            <v-divider class="w-75 mx-auto"></v-divider>
+            <v-divider class="w-100 mx-auto mb-1"></v-divider>
             <div v-for="item in expense.expenses" :key="item.id" >
-              <div class="d-flex justify-space-between w-75 mx-auto align-center expense-entry">
-                <div class="ml-4 my-2">
-                  {{item.description}}
-                  <v-chip size="x-small" class="ml-2 hover-entry-chip" @click="deleteExpenseEnrtySoft(expense.id, item.ee_id)">
-                    <v-icon>mdi-delete</v-icon>
-                  </v-chip>
-                </div>
-                <div class="mr-4 ">{{ item.amount < 0 ? `${Math.abs(item.amount)}/- added`: `${item.amount}/- subtracted` }}</div>
+              <div class="d-flex flex-column justify-space-between expense-entry">
+                <v-row>
+                  <v-col cols="8">
+                    <span class="text-left">{{item.description}}</span>
+                    <v-chip
+                      size="x-small"
+                      class="hover-entry-chip ml-4"
+                      @click="deleteExpenseEnrtySoft(expense.id, item.ee_id)">
+                      <v-icon>mdi-delete</v-icon>
+                    </v-chip>
+                  </v-col>
+                  <v-col cols="4">
+                    <div class="font-weight-bold text-right">
+                      {{ item.amount < 0 ? `+ ${Math.abs(item.amount)}/-`: `${item.amount}/-` }}
+                    </div>
+                  </v-col>
+                </v-row>
+                <div class="ml-3 font-weight-bold"></div>
               </div>
-              <v-divider class="w-75 mx-auto"></v-divider>
+              <v-divider class="w-100 mx-auto mt-1"></v-divider>
             </div>
-            <div class="w-75 mx-auto mt-3">
+            <div class="w-100 mt-3">
                 <template v-for="item, index in expenseEntriesList" :key="index">
-                  <v-row class="mx-2">
+                  <v-row class="mx-1">
                     <v-col cols="3">
                       <v-text-field
                         v-model="item.amount"
@@ -215,7 +236,7 @@
                     </v-col>
                     <v-col cols="8">
                       <v-text-field
-                      v-model="item.description"
+                        v-model="item.description"
                         color="primary"
                         label="Description"
                         variant="underlined"
@@ -228,13 +249,21 @@
                     </v-col>
                   </v-row>
                 </template>
-                <v-chip class="ml-4 mt-3 cursor-pointer bg-dark" @click="addExpenseEntry(e)">+ Add entry</v-chip>
-                <v-chip
-                  v-if="expenseEntriesList.length >= 1"
-                  class="ml-4 mt-3 cursor-pointer bg-dark"
-                  @click="submitExpenseEntrySoft(expense.id)">
-                  Submit
-                </v-chip>
+                <div class="mt-3 d-flex justify-space-between">
+                  <v-btn
+                    rounded
+                    variant="tonal"
+                    class=" cursor-pointer w-40 bg-dark"
+                    @click="addExpenseEntry(e)">+ Add entry</v-btn>
+                  <v-btn
+                    v-if="expenseEntriesList.length >= 1"
+                    rounded
+                    variant="tonal"
+                    class=" cursor-pointer w-40 bg-dark"
+                    @click="submitExpenseEntrySoft(expense.id)">
+                    Submit
+                  </v-btn>
+                </div>
             </div>
           </v-expansion-panel-text>
         </v-expansion-panel>
@@ -267,7 +296,8 @@ export default {
       newEntryTag: null,
       selectedBank: '',
       toggleLogin: 0,
-      initialExpenseEntriesList: reactive([])
+      initialExpenseEntriesList: reactive([]),
+      currentSlide: 0
     }
   },
   components: {
@@ -395,5 +425,17 @@ export default {
   }
   .make-opacity{
     opacity: 1;
+  }
+  .v-carousel__controls {
+    display: none !important;
+  }
+  .v-expansion-panel-title__icon {
+    display: none !important;
+  }
+  .w-40 {
+    width: 40%;
+  }
+  .w-80 {
+    width: 80%;
   }
 </style>

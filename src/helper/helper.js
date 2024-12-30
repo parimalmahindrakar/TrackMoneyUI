@@ -41,11 +41,3 @@ export const fetchAccessToken = () => {
         traceMyMoneyStore().setLoggedInStatus(false)
     }
 }
-
-export const toggleMoneyString = (money) => {
-    if (money < 0) {
-        return `+${Math.abs(money)}`
-    }
-    return money;
-}
-

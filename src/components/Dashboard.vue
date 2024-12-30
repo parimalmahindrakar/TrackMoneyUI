@@ -254,7 +254,7 @@
 import { reactive } from "vue";
 import { mapActions, mapState } from 'pinia'
 import { traceMyMoneyStore } from "@/stores/traceMyMoneyStore";
-import { filterValidExpenses, toggleMoneyString } from '../helper/helper'
+import { filterValidExpenses } from '../helper/helper'
 
 // components
 import LoginVue from './Login.vue';

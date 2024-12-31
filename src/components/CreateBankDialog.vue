@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="getDialogVisible" max-width="500">
+  <v-dialog v-model="getCreateBankDialogVisible" max-width="500">
     <template v-slot:default="{ isActive }">
       <v-card title="Create the bank data">
         <v-text-field
@@ -29,7 +29,7 @@
               @click="() => { createBankSoft(false) }">
               Create Bank
             </v-btn>
-            <v-btn class="w-40" variant="outlined" color="warning" @click="() => { setDialogVisible(false) }">Cancel</v-btn>
+            <v-btn class="w-40" variant="outlined" color="warning" @click="() => { setCreateBankDialogVisible(false) }">Cancel</v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -50,12 +50,12 @@ export default {
   },
   computed: {
     ...mapState(traceMyMoneyStore, [
-      "getDialogVisible"
+      "getCreateBankDialogVisible"
     ])
   },
   methods: {
     ...mapActions(traceMyMoneyStore, [
-      "setDialogVisible",
+      "setCreateBankDialogVisible",
       "createBank"
     ]),
     createBankSoft() {

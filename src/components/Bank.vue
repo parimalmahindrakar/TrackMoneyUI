@@ -28,7 +28,7 @@
         </v-card>
         </v-carousel-item>
         <v-carousel-item>
-        <v-card class="pa-4" @click="() => {setDialogVisible(true)}">
+        <v-card class="pa-4" @click="() => {setCreateBankDialogVisible(true)}">
             <v-row>
                 <v-col cols="12" class="text-center">
                     <v-card-title class="text-h2">
@@ -72,7 +72,7 @@ export default {
     },
     methods: {
         ...mapActions(traceMyMoneyStore, [
-            "setDialogVisible",
+            "setCreateBankDialogVisible",
             "setFilteredExpensesList",
             "deleteBank"
         ]),

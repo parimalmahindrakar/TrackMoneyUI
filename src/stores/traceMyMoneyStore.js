@@ -19,7 +19,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         showLoginPage: true,
         showAlert: false,
         alertErrorMessages: [],
-        isDialogVisible: false,
+        isCreateBankDialogVisible: false,
         TM_BACKEND_URL: import.meta.env.VITE_TM_BACKEND_URL,
     }),
     getters: {
@@ -38,7 +38,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         getLoginPageStatus: (state) => state.showLoginPage,
         getShowAlert: (state) => state.showAlert,
         getAlertErrorMessages: (state) => state.alertErrorMessages,
-        getDialogVisible: (state) => state.isDialogVisible
+        getCreateBankDialogVisible: (state) => state.isCreateBankDialogVisible
     },
     actions: {
         setUserName(userName) {
@@ -62,8 +62,8 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         setExpenseEntryCreationDate(changedDate) {
             this.expenseEntryCreationDate = changedDate
         },
-        setDialogVisible(status) {
-            this.isDialogVisible = status
+        setCreateBankDialogVisible(status) {
+            this.isCreateBankDialogVisible = status
         },
         async getInitialData() {
             if (this.isLoggedIn) {

@@ -97,7 +97,9 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                         "bankId": ele.id
                     }));
                     this.expensesList = responses[1].data?.expenses
-                    this.entryTags = responses[2].data?.entry_tags.map(ele => ({title: ele.name, value: ele.id}))
+                    this.entryTags = responses[2].data?.entry_tags
+                                        .map(ele => ({title: ele.name, value: ele.id}))
+                                        .sort((a, b) => a.title.localeCompare(b.title));
                     this.filteredExpensesList = this.expensesList
                     this.bankItems = this.banksList.map(ele => ({ title: ele.bankName, value: ele.bankId }))
                 }

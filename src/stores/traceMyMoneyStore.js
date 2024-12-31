@@ -19,6 +19,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         showLoginPage: true,
         showAlert: false,
         alertErrorMessages: [],
+        isDialogVisible: false,
         TM_BACKEND_URL: import.meta.env.VITE_TM_BACKEND_URL,
     }),
     getters: {
@@ -36,7 +37,8 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         getExpenseEntryCreationDate: (state) => state.expenseEntryCreationDate,
         getLoginPageStatus: (state) => state.showLoginPage,
         getShowAlert: (state) => state.showAlert,
-        getAlertErrorMessages: (state) => state.alertErrorMessages
+        getAlertErrorMessages: (state) => state.alertErrorMessages,
+        getDialogVisible: (state) => state.isDialogVisible
     },
     actions: {
         setUserName(userName) {
@@ -59,6 +61,9 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         },
         setExpenseEntryCreationDate(changedDate) {
             this.expenseEntryCreationDate = changedDate
+        },
+        setDialogVisible(status) {
+            this.isDialogVisible = status
         },
         async getInitialData() {
             if (this.isLoggedIn) {
@@ -216,6 +221,28 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             })
+        },
+        async createBank(data) {
+            const updatedData = {
+                ...data,
+                ...{
+                    "current_balance": data["initial_balance"],
+                    "total_disbursed_till_now": 0,
+                }
+            }
+            try {
+                const response = await axios.post("banks/create",
+                    updatedData,
+                    { baseURL: this.TM_BACKEND_URL }
+                )
+                if (response.status == 200) {
+                    location.reload()
+                }
+            } catch(err) {
+                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showAlert = true
+                this.alertErrorMessages.push(pushToData)
+            }
         },
         logoutUser() {
             localStorage.removeItem("access_token")

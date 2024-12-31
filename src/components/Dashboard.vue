@@ -2,6 +2,7 @@
   <AlertVue/>
   <NavbarVue/>
   <CreateBankDialogVue/>
+  <ApplyEntryTagsVue :tagInfo="applyTagInfo" />
   <v-container class="mt-15" v-if="getLoggedInStatus">
     <BankVue/>
     <v-expansion-panels>
@@ -137,7 +138,7 @@
               <div class="d-flex flex-column justify-space-between expense-entry">
                 <v-row>
                   <v-col cols="8">
-                    <span class="text-left">{{item.description}}</span>
+                    <span class="text-left" @click="getEntryInformation(expense, item)">{{item.description}}</span>
                     <v-chip
                       size="x-small"
                       class="hover-entry-chip ml-4"
@@ -225,6 +226,7 @@ import BankVue from "./Bank.vue";
 import NavbarVue from './Navbar.vue';
 import AlertVue from './Alert.vue';
 import CreateBankDialogVue from './CreateBankDialog.vue';
+import ApplyEntryTagsVue from './ApplyEntryTags.vue';
 
 export default {
   data() {
@@ -233,6 +235,7 @@ export default {
       newEntryTag: null,
       selectedBank: '',
       initialExpenseEntriesList: reactive([]),
+      applyTagInfo: reactive({})
     }
   },
   components: {
@@ -241,7 +244,8 @@ export default {
     BankVue,
     NavbarVue,
     AlertVue,
-    CreateBankDialogVue
+    CreateBankDialogVue,
+    ApplyEntryTagsVue
   },
   computed: {
     ...mapState(traceMyMoneyStore, [
@@ -266,7 +270,8 @@ export default {
       "submitExpense",
       "submitExpenseEntry",
       "setFilteredExpensesList",
-      "setExpenseEntryCreationDate"
+      "setExpenseEntryCreationDate",
+      "setApplyEntryTagVisible"
     ]),
 
     // API related functions
@@ -298,9 +303,6 @@ export default {
       const filterdExpenseEntries = filterValidExpenses(this.expenseEntriesList)
       this.submitExpenseEntry(expenseId, filterdExpenseEntries)
     },
-    createBankSoft() {
-
-    },
 
     // UI related functions
     addExpenseEntry() {
@@ -323,6 +325,15 @@ export default {
     },
     changeExpenseEntryCreationDate(chagnedDate) {
       this.setExpenseEntryCreationDate(chagnedDate)
+    },
+    getEntryInformation(expense, entry) {
+      this.applyTagInfo = {
+        ...entry,
+        ...{
+          expenseId: expense.id
+        }
+      }
+      this.setApplyEntryTagVisible(true)
     }
   }
 }

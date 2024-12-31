@@ -19,7 +19,8 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         showLoginPage: true,
         showAlert: false,
         alertErrorMessages: [],
-        isDialogVisible: false,
+        isCreateBankDialogVisible: false,
+        isApplyEntryTagVisible: false,
         TM_BACKEND_URL: import.meta.env.VITE_TM_BACKEND_URL,
     }),
     getters: {
@@ -38,7 +39,8 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         getLoginPageStatus: (state) => state.showLoginPage,
         getShowAlert: (state) => state.showAlert,
         getAlertErrorMessages: (state) => state.alertErrorMessages,
-        getDialogVisible: (state) => state.isDialogVisible
+        getCreateBankDialogVisible: (state) => state.isCreateBankDialogVisible,
+        getApplyEntryTagVisible: (state) => state.isApplyEntryTagVisible,
     },
     actions: {
         setUserName(userName) {
@@ -62,8 +64,11 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         setExpenseEntryCreationDate(changedDate) {
             this.expenseEntryCreationDate = changedDate
         },
-        setDialogVisible(status) {
-            this.isDialogVisible = status
+        setCreateBankDialogVisible(status) {
+            this.isCreateBankDialogVisible = status
+        },
+        setApplyEntryTagVisible(status) {
+            this.isApplyEntryTagVisible = status
         },
         async getInitialData() {
             if (this.isLoggedIn) {
@@ -256,6 +261,21 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 )
                 if (expensesResponse.status == 204) {
                     window.location.reload()
+                }
+            } catch(err) {
+                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showAlert = true
+                this.alertErrorMessages.push(pushToData)
+            }
+        },
+        async applyTagsToExpenseEntry(data) {
+            try {
+                const response = await axios.patch("expenses/update-entry",
+                    data,
+                    { baseURL: this.TM_BACKEND_URL }
+                )
+                if (response.status == 201) {
+                    location.reload()
                 }
             } catch(err) {
                 const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message

@@ -65,11 +65,12 @@ export default {
     },
     methods: {
         ...mapActions(traceMyMoneyStore, [
-            "setDialogVisible"
+            "setDialogVisible",
+            "setFilteredExpensesList"
         ]),
-        openCreateBankDialog() {
-
-        }
+        handleBankClick(bank) {
+            this.setFilteredExpensesList(bank)
+        },
     },
 }
 </script>

@@ -277,10 +277,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     { baseURL: this.TM_BACKEND_URL }
                 )
                 if (response.status == 201) {
-                    // location.reload()
-                    const pushToData = "Updated entry"
-                    this.showAlert = true
-                    this.alertErrorMessages.push(pushToData)
+                    location.reload()
                 }
             } catch(err) {
                 const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message

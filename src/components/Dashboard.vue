@@ -138,7 +138,16 @@
               <div class="d-flex flex-column justify-space-between expense-entry">
                 <v-row>
                   <v-col cols="8">
-                    <span class="text-left cursor-pointer" @click="getEntryInformation(expense, item)">{{item.description}}</span>
+                    <span
+                      class="text-left cursor-pointer"
+                      @click="getEntryInformation(expense, item)">
+                      {{item.description}}
+                      <v-icon
+                        v-if="item.entry_tags.length > 0"
+                        size="x-small">
+                        mdi-tag
+                      </v-icon>
+                    </span>
                     <v-chip
                       size="x-small"
                       class="hover-entry-chip ml-4"

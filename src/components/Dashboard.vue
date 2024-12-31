@@ -1,9 +1,9 @@
 <template>
-  <Alert/>
-  <Navbar/>
-  <CreateBankDialog/>
+  <AlertVue/>
+  <NavbarVue/>
+  <CreateBankDialogVue/>
   <v-container class="mt-15" v-if="getLoggedInStatus">
-    <Bank/>
+    <BankVue/>
     <v-expansion-panels>
       <div class="w-100 d-flex">
         <v-row>
@@ -221,10 +221,10 @@ import { filterValidExpenses } from '../helper/helper'
 // components
 import LoginVue from './Login.vue';
 import RegisterVue from './Register.vue';
-import Bank from "./Bank.vue";
-import Navbar from './Navbar.vue';
-import Alert from './Alert.vue';
-import CreateBankDialog from './CreateBankDialog.vue';
+import BankVue from "./Bank.vue";
+import NavbarVue from './Navbar.vue';
+import AlertVue from './Alert.vue';
+import CreateBankDialogVue from './CreateBankDialog.vue';
 
 export default {
   data() {
@@ -238,10 +238,10 @@ export default {
   components: {
     LoginVue,
     RegisterVue,
-    Bank,
-    Navbar,
-    Alert,
-    CreateBankDialog
+    BankVue,
+    NavbarVue,
+    AlertVue,
+    CreateBankDialogVue
   },
   computed: {
     ...mapState(traceMyMoneyStore, [
@@ -270,9 +270,6 @@ export default {
     ]),
 
     // API related functions
-    handleBankClick(bank) {
-      this.setFilteredExpensesList(bank)
-    },
     deleteExpenseSoft(expenseId) {
       if (confirm("Are you sure you want to delete this expense ?")) {
         this.deleteExpense(expenseId)

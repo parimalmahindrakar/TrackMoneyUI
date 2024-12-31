@@ -24,11 +24,13 @@
                   <v-select
                     :items="getBankItems"
                     v-model="selectedBank"
-                    placeholder="Select the bank"
+                    variant="outlined"
+                    label="Select the bank"
                     class="w-100"
                   ></v-select>
                   <v-text-field
                     label="Add the date"
+                    variant="outlined"
                     v-model="getExpenseEntryCreationDate"
                     @update:modelValue="changeExpenseEntryCreationDate"
                   ></v-text-field>
@@ -106,6 +108,7 @@
               <v-expansion-panel-text>
                 <v-combobox
                   clearable
+                  variant="outlined"
                   placeholder="Enter the name of tag"
                   :items="getEntryTags"
                   v-model="newEntryTag"
@@ -176,22 +179,22 @@
             </div>
             <div class="w-100 mt-3">
                 <template v-for="item, index in expenseEntriesList" :key="index">
-                  <v-row class="mx-1">
-                    <v-col cols="3">
+                  <v-row>
+                    <v-col cols="4">
                       <v-text-field
                         v-model="item.amount"
                         color="primary"
                         label="Amount"
                         type="number"
-                        variant="underlined"
+                        variant="outlined"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="8">
+                    <v-col cols="7">
                       <v-text-field
                         v-model="item.description"
                         color="primary"
                         label="Description"
-                        variant="underlined"
+                        variant="outlined"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="1">
@@ -199,6 +202,15 @@
                         mdi-minus
                       </v-icon>
                     </v-col>
+                    <v-select
+                      class="mx-3"
+                      variant="outlined"
+                      label="Select the tag"
+                      v-model="item.entry_tags"
+                      :items="getEntryTags"
+                      multiple
+                    >
+                    </v-select>
                   </v-row>
                 </template>
                 <div class="mt-3 d-flex justify-space-between">
@@ -326,7 +338,8 @@ export default {
     addExpenseEntry() {
       this.expenseEntriesList.push({
         "amount": null,
-        "description": null
+        "description": null,
+        "entry_tags": []
       })
     },
     removeExpenseEntry(counter) {

@@ -3,15 +3,13 @@
       <v-card class="mx-auto px-6 py-8">
         <!-- Add the rules for the both username and password -->
         <v-text-field
-          density="compact"
-          placeholder="Enter your username"
+          label="Enter your username"
           prepend-inner-icon="mdi-account-circle"
           variant="outlined"
           v-model="userName"
         ></v-text-field>
         <v-text-field
-          density="compact"
-          placeholder="Enter your email"
+          label="Enter your email"
           prepend-inner-icon="mdi-email-outline"
           variant="outlined"
           v-model="email"
@@ -19,8 +17,7 @@
         <v-text-field
           :append-inner-icon="visiblePassword ? 'mdi-eye-off' : 'mdi-eye'"
           :type="visiblePassword ? 'text' : 'password'"
-          density="compact"
-          placeholder="Enter your password"
+          label="Enter your password"
           prepend-inner-icon="mdi-lock-outline"
           variant="outlined"
           @click:append-inner="visiblePassword = !visiblePassword"
@@ -29,8 +26,7 @@
         <v-text-field
           :append-inner-icon="visibleConfirmationPassword ? 'mdi-eye-off' : 'mdi-eye'"
           :type="visibleConfirmationPassword ? 'text' : 'password'"
-          density="compact"
-          placeholder="Confirm your password"
+          label="Confirm your password"
           prepend-inner-icon="mdi-lock-outline"
           variant="outlined"
           @click:append-inner="visibleConfirmationPassword = !visibleConfirmationPassword"

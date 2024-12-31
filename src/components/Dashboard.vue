@@ -36,22 +36,22 @@
                 <div class="d-flex justify-center align-center">
                   <div class="w-100 mx-auto">
                     <template v-for="item, index in initialExpenseEntriesList" :key="index">
-                      <v-row class="mx-1">
-                        <v-col cols="3">
+                      <v-row>
+                        <v-col cols="4">
                           <v-text-field
                             v-model="item.amount"
                             color="primary"
                             label="Amount"
                             type="number"
-                            variant="underlined"
+                            variant="outlined"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="8">
+                        <v-col cols="7">
                           <v-text-field
-                          v-model="item.description"
+                            v-model="item.description"
                             color="primary"
                             label="Description"
-                            variant="underlined"
+                            variant="outlined"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="1">
@@ -59,6 +59,15 @@
                             mdi-minus
                           </v-icon>
                         </v-col>
+                        <v-select
+                          class="mx-3"
+                          variant="outlined"
+                          label="Select the tag"
+                          v-model="item.selected_tags"
+                          :items="getEntryTags"
+                          multiple
+                        >
+                        </v-select>
                       </v-row>
                     </template>
                     <div class="d-flex justify-center align-center">
@@ -326,7 +335,8 @@ export default {
     addInitialExpenseEntry() {
       this.initialExpenseEntriesList.push({
         "amount": null,
-        "description": null
+        "description": null,
+        "selected_tags": []
       })
     },
     removeInitialExpenseEntry(counter) {

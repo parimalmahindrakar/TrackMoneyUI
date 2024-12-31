@@ -1,77 +1,9 @@
 <template>
-  <v-alert
-    dismissible
-    color="red"
-    border="left"
-    elevation="2"
-    colored-border
-    closable
-    :class="['v_alert_changes', 'w-lg-25', 'w-80', { 'make-opacity': getShowAlert }]"
-    v-for="(alertMessage, index) in getAlertErrorMessages"
-    :key="index"
-  >
-    {{ alertMessage }}
-  </v-alert>
-
-  <v-app-bar scroll-behavior="hide">
-    <v-container>
-      <div class="d-flex justify-space-between align-center">
-        <span class="text-sm-h5 text-md-h4 text-h6">
-          Trace My Money
-        </span>
-        <span>
-          <span v-if="getLoggedInStatus">
-            Hello, {{ getUserName }}
-            <span
-              color="primary"
-              class="cursor-pointer"
-            >
-              <v-icon
-                icon="mdi-logout"
-                end
-                @click="logoutUser"
-              ></v-icon>
-            </span>
-          </span>
-          <div v-else>
-            <v-btn-toggle
-              color="success"
-              v-model="toggleLogin"
-              class="custom-btn-toggle"
-            >
-              <v-btn @click="() => { setLoginPageStatus(true) }" class="custom-btn">Login</v-btn>
-              <v-btn @click="() => { setLoginPageStatus(false) }" class="custom-btn">Register</v-btn>
-            </v-btn-toggle>
-          </div>
-        </span>
-      </div>
-    </v-container>
-  </v-app-bar>
+  <Alert/>
+  <Navbar/>
+  <CreateBankDialog/>
   <v-container class="mt-15" v-if="getLoggedInStatus">
-    <v-carousel
-      v-model="currentSlide"
-      :cycle="false"
-      :show-arrows="true"
-      :interval="5000"
-      height="auto"
-      class="mb-8"
-    >
-      <v-carousel-item
-        v-for="(bank, index) in getBanksList"
-        :key="index"
-      >
-        <v-card class="pa-4" @click="handleBankClick(bank)">
-          <v-row>
-            <v-col cols="12" class="text-center">
-              <v-card-title class="text-h2">{{ bank.bankName }}</v-card-title>
-            </v-col>
-            <v-col cols="12" class="text-center">
-              <v-card-subtitle class="text-h2">{{ bank.remainingBalance }}</v-card-subtitle>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-carousel-item>
-    </v-carousel>
+    <Bank/>
     <v-expansion-panels>
       <div class="w-100 d-flex">
         <v-row>
@@ -180,7 +112,7 @@
           :key="expense"
           class="chip-container"
         >
-          <v-expansion-panel-title>
+          <v-expansion-panel-title class="px-2">
             <template v-slot:default="{ expanded }">
               <v-row no-gutters>
                 <v-col class="d-flex justify-space-between align-center" cols="12">
@@ -289,6 +221,10 @@ import { filterValidExpenses } from '../helper/helper'
 // components
 import LoginVue from './Login.vue';
 import RegisterVue from './Register.vue';
+import Bank from "./Bank.vue";
+import Navbar from './Navbar.vue';
+import Alert from './Alert.vue';
+import CreateBankDialog from './CreateBankDialog.vue';
 
 export default {
   data() {
@@ -296,27 +232,25 @@ export default {
       expenseEntriesList: reactive([]),
       newEntryTag: null,
       selectedBank: '',
-      toggleLogin: 0,
       initialExpenseEntriesList: reactive([]),
-      currentSlide: 0
     }
   },
   components: {
     LoginVue,
-    RegisterVue
+    RegisterVue,
+    Bank,
+    Navbar,
+    Alert,
+    CreateBankDialog
   },
   computed: {
     ...mapState(traceMyMoneyStore, [
-      "getUserName",
       "getLoggedInStatus",
       "getExpenseEntryCreationDate",
-      "getBanksList",
-      "getExpensesList",
       "getBankItems",
       "getLoginPageStatus",
       "getFilteredExpensesList",
       "getEntryTags",
-      "getShowAlert",
       "getAlertErrorMessages"
     ])
   },
@@ -331,8 +265,6 @@ export default {
       "createNewTag",
       "submitExpense",
       "submitExpenseEntry",
-      "logoutUser",
-      "setLoginPageStatus",
       "setFilteredExpensesList",
       "setExpenseEntryCreationDate"
     ]),
@@ -368,6 +300,9 @@ export default {
     submitExpenseEntrySoft(expenseId) {
       const filterdExpenseEntries = filterValidExpenses(this.expenseEntriesList)
       this.submitExpenseEntry(expenseId, filterdExpenseEntries)
+    },
+    createBankSoft() {
+
     },
 
     // UI related functions
@@ -454,5 +389,8 @@ export default {
       font-size: 12px;
       padding: 6px 12px;
     }
+  }
+  .custom-hidden {
+    opacity: 0;
   }
 </style>

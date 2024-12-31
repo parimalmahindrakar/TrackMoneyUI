@@ -244,6 +244,25 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 this.alertErrorMessages.push(pushToData)
             }
         },
+        async deleteBank(bankId) {
+            try {
+                const expensesResponse = await axios.delete("banks/delete",
+                    {
+                        params: {
+                            bank_id: bankId
+                        },
+                        baseURL: this.TM_BACKEND_URL
+                    }
+                )
+                if (expensesResponse.status == 204) {
+                    window.location.reload()
+                }
+            } catch(err) {
+                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showAlert = true
+                this.alertErrorMessages.push(pushToData)
+            }
+        },
         logoutUser() {
             localStorage.removeItem("access_token")
             location.reload()

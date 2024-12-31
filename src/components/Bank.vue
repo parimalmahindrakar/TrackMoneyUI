@@ -8,46 +8,53 @@
         class="mb-8"
     >
         <v-carousel-item
-        v-for="(bank, index) in getBanksList"
-        :key="index"
+            v-for="(bank, index) in getBanksList"
+            :key="index"
         >
         <v-card class="pa-4" @click="handleBankClick(bank)" elevation="0">
+            <v-chip color="red custom-chip" @click="deleteBankSoft(bank.bankId)">
+                <v-icon color="red">
+                    mdi-delete
+                </v-icon>
+            </v-chip>
             <v-row>
-            <v-col cols="12" class="text-center">
-                <v-card-title class="text-h2">{{ bank.bankName }}</v-card-title>
-            </v-col>
-            <v-col cols="12" class="text-center">
-                <v-card-subtitle class="text-h2">{{ bank.remainingBalance }}</v-card-subtitle>
-            </v-col>
+                <v-col cols="12" class="text-center">
+                    <v-card-title class="text-h2">{{ bank.bankName }}</v-card-title>
+                </v-col>
+                <v-col cols="12" class="text-center">
+                    <v-card-subtitle class="text-h2">{{ bank.remainingBalance }}</v-card-subtitle>
+                </v-col>
             </v-row>
         </v-card>
         </v-carousel-item>
         <v-carousel-item>
         <v-card class="pa-4" @click="() => {setDialogVisible(true)}">
             <v-row>
-            <v-col cols="12" class="text-center">
-                <v-card-title class="text-h2">
                 <v-col cols="12" class="text-center">
-                    <v-card-title class="text-h2 ">
-                    Create
+                    <v-card-title class="text-h2">
+                        <v-col cols="12" class="text-center">
+                            <v-card-title class="text-h2 "> Create </v-card-title>
+                            <v-divider class="w-50 mx-auto"></v-divider>
+                            <v-card-title class="text-h2 ">Bank</v-card-title>
+                        </v-col>
                     </v-card-title>
-                    <v-divider class="w-50 mx-auto"></v-divider>
-                    <v-card-title class="text-h2 ">Bank</v-card-title>
                 </v-col>
                 <v-col cols="12" class="text-center">
+                    <v-card-subtitle class="text-h2"></v-card-subtitle>
                 </v-col>
-                </v-card-title>
-            </v-col>
-            <v-col cols="12" class="text-center">
-                <v-card-subtitle class="text-h2"></v-card-subtitle>
-            </v-col>
             </v-row>
         </v-card>
         </v-carousel-item>
     </v-carousel>
 </template>
-
-
+<style>
+  .custom-chip {
+    position: absolute !important;
+    top: 10px;
+    right: 10px;
+    z-index: 9999;
+  }
+</style>
 <script>
 import { traceMyMoneyStore } from "@/stores/traceMyMoneyStore";
 import { mapActions, mapState } from 'pinia'
@@ -66,11 +73,17 @@ export default {
     methods: {
         ...mapActions(traceMyMoneyStore, [
             "setDialogVisible",
-            "setFilteredExpensesList"
+            "setFilteredExpensesList",
+            "deleteBank"
         ]),
         handleBankClick(bank) {
             this.setFilteredExpensesList(bank)
         },
+        deleteBankSoft(bankId) {
+            if (confirm("Do you really want to delte this bank ?")) {
+                this.deleteBank(bankId)
+            }
+        }
     },
 }
 </script>

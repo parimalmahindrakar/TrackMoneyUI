@@ -3,12 +3,12 @@
   <NavbarVue/>
   <CreateBankDialogVue/>
   <ApplyEntryTagsVue :tagInfo="applyTagInfo" />
-  <v-container class="mt-15" v-if="getLoggedInStatus">
+  <v-container class="mt-15 w-xl-75 w-100" v-if="getLoggedInStatus">
     <BankVue/>
     <v-expansion-panels>
-      <div class="w-100 d-flex">
+      <div class="w-100 w-lg-75">
         <v-row>
-          <v-col cols="12">
+          <v-col cols="12" md="6" lg="8">
             <v-expansion-panel class="chip-container">
               <v-expansion-panel-title>
                 <template v-slot:default="{ expanded }">
@@ -94,7 +94,7 @@
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-col>
-          <v-col cols="12">
+          <v-col cols="12" md="6" lg="4">
             <v-expansion-panel class="chip-container mb-10">
               <v-expansion-panel-title>
                 <template v-slot:default="{ expanded }">
@@ -119,7 +119,7 @@
           </v-col>
         </v-row>
       </div>
-      <div class="scrollable-panel w-100">
+      <div class="scrollable-panel mt-4 w-100 w-lg-75">
         <v-expansion-panel
           v-for="expense in getFilteredExpensesList"
           :key="expense"
@@ -147,7 +147,7 @@
           <v-expansion-panel-text>
             <v-divider class="w-100 mx-auto mb-1"></v-divider>
             <div v-for="item in expense.expenses" :key="item.id" >
-              <div class="d-flex flex-column justify-space-between expense-entry">
+              <div class="d-flex flex-column justify-space-between expense-entry mx-lg-10">
                 <v-row>
                   <v-col cols="8">
                     <span
@@ -180,7 +180,7 @@
             <div class="w-100 mt-3">
                 <template v-for="item, index in expenseEntriesList" :key="index">
                   <v-row>
-                    <v-col cols="4">
+                    <v-col cols="5">
                       <v-text-field
                         v-model="item.amount"
                         color="primary"
@@ -197,11 +197,6 @@
                         variant="outlined"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="1">
-                      <v-icon @click="removeExpenseEntry(index)">
-                        mdi-minus
-                      </v-icon>
-                    </v-col>
                     <v-select
                       class="mx-3"
                       variant="outlined"
@@ -211,18 +206,21 @@
                       multiple
                     >
                     </v-select>
+                    <v-col cols="1">
+                      <v-icon @click="removeExpenseEntry(index)">
+                        mdi-minus
+                      </v-icon>
+                    </v-col>
                   </v-row>
                 </template>
                 <div class="mt-3 d-flex justify-space-between">
                   <v-btn
-                    rounded
-                    variant="tonal"
+                    variant="outlined"
                     class=" cursor-pointer w-40 bg-dark"
                     @click="addExpenseEntry(e)">+ Add entry</v-btn>
                   <v-btn
                     v-if="expenseEntriesList.length >= 1"
-                    rounded
-                    variant="tonal"
+                    variant="outlined"
                     class=" cursor-pointer w-40 bg-dark"
                     @click="submitExpenseEntrySoft(expense.id)">
                     Submit

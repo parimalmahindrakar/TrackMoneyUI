@@ -123,10 +123,10 @@
           <div></div>
           <div>
             <v-select
-              v-model="pageSize"
+              v-model="getPageSize"
               :items="[5, 10, 15, 20]"
               variant="outlined"
-              @update:modelValue="onPageChange"
+              @update:modelValue="onPageChange($event, 'pageSize')"
             >
             </v-select>
           </div>
@@ -244,16 +244,16 @@
       </div>
     </v-expansion-panels>
     <v-pagination
-      v-model="pageNumber"
-      :length="(getCurrentTotalExpenses / pageSize) + 1"
+      v-model="getPageNumber"
+      :length="(getCurrentTotalExpenses / getPageSize) + 1"
       :total-visible="6"
       class="mt-5 w-100"
-      size="small"
+      size="x-small"
       variant="elevated"
       active-color="success"
-      @next="onPageChange"
-      @prev="onPageChange"
-      @update:modelValue="onPageChange"
+      @next="onPageChange($event, 'pageNumber')"
+      @prev="onPageChange($event, 'pageNumber')"
+      @update:modelValue="onPageChange($event, 'pageNumber')"
     ></v-pagination>
   </v-container>
   <v-container class="mt-15 mx-3" v-else>
@@ -309,7 +309,9 @@ export default {
       "getFilteredExpensesList",
       "getEntryTags",
       "getAlertErrorMessages",
-      "getCurrentTotalExpenses"
+      "getCurrentTotalExpenses",
+      "getPageNumber",
+      "getPageSize"
     ])
   },
   async created() {
@@ -325,7 +327,9 @@ export default {
       "submitExpenseEntry",
       "setExpenseEntryCreationDate",
       "setApplyEntryTagVisible",
-      "fetchExpenses"
+      "fetchExpenses",
+      "setPageNumber",
+      "setPageSize"
     ]),
 
     // API related functions
@@ -391,12 +395,14 @@ export default {
       }
       this.setApplyEntryTagVisible(true)
     },
-    onPageChange() {
-      const data = {
-        "per_page": this.pageSize,
-        "page_number": this.pageNumber
+    onPageChange(event, eventType) {
+      if (eventType === "pageNumber") {
+        this.setPageNumber(event)
       }
-      this.fetchExpenses(data)
+      if (eventType === "pageSize") {
+        this.setPageSize(event)
+      }
+      this.fetchExpenses()
     }
   }
 }

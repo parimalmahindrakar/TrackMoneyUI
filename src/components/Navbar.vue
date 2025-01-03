@@ -1,7 +1,7 @@
 <template>
     <v-app-bar scroll-behavior="hide">
-      <v-container>
-        <div class="d-flex justify-space-between align-center">
+      <v-container class="w-lg-75 w-100">
+        <div class="d-flex w-lg-75 mx-auto justify-space-between align-center">
           <span class="text-sm-h5 text-md-h4 text-h6">
             Trace My Money
           </span>

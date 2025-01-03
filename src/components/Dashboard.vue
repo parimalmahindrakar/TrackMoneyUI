@@ -119,13 +119,25 @@
           </v-col>
         </v-row>
       </div>
-      <div class="scrollable-panel mt-4 w-100 w-lg-75">
+      <div class="w-lg-75 w-100 d-flex justify-space-between">
+          <div></div>
+          <div>
+            <v-select
+              v-model="pageSize"
+              :items="[5, 10, 15, 20]"
+              variant="outlined"
+              @update:modelValue="onPageChange"
+            >
+            </v-select>
+          </div>
+        </div>
+      <div class="w-100 w-lg-75">
         <v-expansion-panel
           v-for="expense in getFilteredExpensesList"
           :key="expense"
           class="chip-container"
         >
-          <v-expansion-panel-title class="px-2">
+          <v-expansion-panel-title class="px-2 mb-3">
             <template v-slot:default="{ expanded }">
               <v-row no-gutters>
                 <v-col class="d-flex justify-space-between align-center" cols="12">
@@ -231,14 +243,25 @@
         </v-expansion-panel>
       </div>
     </v-expansion-panels>
+    <v-pagination
+      v-model="pageNumber"
+      :length="(getCurrentTotalExpenses / pageSize) + 1"
+      :total-visible="6"
+      class="mt-5 w-100"
+      size="small"
+      variant="elevated"
+      active-color="success"
+      @next="onPageChange"
+      @prev="onPageChange"
+      @update:modelValue="onPageChange"
+    ></v-pagination>
   </v-container>
-  <v-container class="mt-15" v-else>
+  <v-container class="mt-15 mx-3" v-else>
     <div class="mt-15 d-flex justify-center align-center">
       <LoginVue v-if="getLoginPageStatus"/>
       <RegisterVue v-if="!getLoginPageStatus"/>
     </div>
   </v-container>
-
 </template>
 
 <script>
@@ -263,7 +286,9 @@ export default {
       newEntryTag: null,
       selectedBank: '',
       initialExpenseEntriesList: reactive([]),
-      applyTagInfo: reactive({})
+      applyTagInfo: reactive({}),
+      pageNumber: 1,
+      pageSize: 5
     }
   },
   components: {
@@ -283,7 +308,8 @@ export default {
       "getLoginPageStatus",
       "getFilteredExpensesList",
       "getEntryTags",
-      "getAlertErrorMessages"
+      "getAlertErrorMessages",
+      "getCurrentTotalExpenses"
     ])
   },
   async created() {
@@ -297,9 +323,9 @@ export default {
       "createNewTag",
       "submitExpense",
       "submitExpenseEntry",
-      "setFilteredExpensesList",
       "setExpenseEntryCreationDate",
-      "setApplyEntryTagVisible"
+      "setApplyEntryTagVisible",
+      "fetchExpenses"
     ]),
 
     // API related functions
@@ -364,6 +390,13 @@ export default {
         }
       }
       this.setApplyEntryTagVisible(true)
+    },
+    onPageChange() {
+      const data = {
+        "per_page": this.pageSize,
+        "page_number": this.pageNumber
+      }
+      this.fetchExpenses(data)
     }
   }
 }
@@ -371,10 +404,6 @@ export default {
 </script>
 
 <style>
-  .scrollable-panel {
-    max-height: 700px;
-    overflow-y: auto;
-  }
   .hover-chip,.hover-entry-chip {
     opacity: 0;
     transition: opacity 0.2s ease;

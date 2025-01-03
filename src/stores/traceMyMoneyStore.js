@@ -21,6 +21,10 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         alertErrorMessages: [],
         isCreateBankDialogVisible: false,
         isApplyEntryTagVisible: false,
+        currentTotalExpenses: 0,
+        currentSelectedBankId: null,
+        pageNumber: 1,
+        pageSize: 5,
         TM_BACKEND_URL: import.meta.env.VITE_TM_BACKEND_URL,
     }),
     getters: {
@@ -41,6 +45,9 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         getAlertErrorMessages: (state) => state.alertErrorMessages,
         getCreateBankDialogVisible: (state) => state.isCreateBankDialogVisible,
         getApplyEntryTagVisible: (state) => state.isApplyEntryTagVisible,
+        getPageNumber: (state) => state.pageNumber,
+        getPageSize: (state) => state.pageSize,
+        getCurrentTotalExpenses: (state) => state.currentTotalExpenses
     },
     actions: {
         setUserName(userName) {
@@ -51,9 +58,6 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         },
         setLoginPageStatus(status) {
             this.showLoginPage = status
-        },
-        setFilteredExpensesList(bank) {
-            this.filteredExpensesList = this.getExpensesList.filter(ele => ele.bank_name === bank.bankName)
         },
         setShowAlert(status) {
             this.showAlert = status
@@ -70,16 +74,46 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         setApplyEntryTagVisible(status) {
             this.isApplyEntryTagVisible = status
         },
+        setPageNumber(number) {
+            this.pageNumber = number
+        },
+        setPageSize(size) {
+            this.pageSize = size
+        },
         async getInitialData() {
             if (this.isLoggedIn) {
                 const date = new Date()
                 this.expenseEntryCreationDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} 00:00`
 
-                const responses = await Promise.all([
-                    axios.get(`${this.TM_BACKEND_URL}banks/`),
-                    axios.get(`${this.TM_BACKEND_URL}expenses/`),
-                    axios.get(`${this.TM_BACKEND_URL}entry-tags/`),
-                ]).catch(error => {
+                try {
+                    const banksResponse = await axios.get(`${this.TM_BACKEND_URL}banks/`)
+                    if (banksResponse) {
+                        this.banksList = banksResponse.data?.banks.map(ele => ({
+                            "bankName": ele.name,
+                            "remainingBalance": ele.current_balance,
+                            "bankId": ele.id
+                        }));
+                        this.bankItems = this.banksList.map(ele => ({ title: ele.bankName, value: ele.bankId }))
+                        this.currentSelectedBankId = this.bankItems[0].value
+
+                        const responses = await Promise.all([
+                            axios.get(`${this.TM_BACKEND_URL}expenses/`, {
+                                params: {
+                                    bank_id: this.currentSelectedBankId
+                                }
+                            }),
+                            axios.get(`${this.TM_BACKEND_URL}entry-tags/`),
+                        ])
+                        if(responses){
+                            this.expensesList = responses[0].data?.expenses
+                            this.currentTotalExpenses = this.expensesList.pop("total_expenses")["total_expenses"]
+                            this.entryTags = responses[1].data?.entry_tags
+                                                .map(ele => ({title: ele.name, value: ele.id}))
+                                                .sort((a, b) => a.title.localeCompare(b.title));
+                            this.filteredExpensesList = this.expensesList
+                        }
+                    }
+                } catch(error) {
                     if (error.status == 401) {
                         if (localStorage.getItem("access_token")) {
                             localStorage.removeItem("access_token")
@@ -89,19 +123,6 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                         // token might be expired hence removing if exists
                         fetchAccessToken()
                     }
-                })
-                if(responses){
-                    this.banksList = responses[0].data?.banks.map(ele => ({
-                        "bankName": ele.name,
-                        "remainingBalance": ele.current_balance,
-                        "bankId": ele.id
-                    }));
-                    this.expensesList = responses[1].data?.expenses
-                    this.entryTags = responses[2].data?.entry_tags
-                                        .map(ele => ({title: ele.name, value: ele.id}))
-                                        .sort((a, b) => a.title.localeCompare(b.title));
-                    this.filteredExpensesList = this.expensesList
-                    this.bankItems = this.banksList.map(ele => ({ title: ele.bankName, value: ele.bankId }))
                 }
             }
         },
@@ -280,6 +301,40 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     location.reload()
                 }
             } catch(err) {
+                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showAlert = true
+                this.alertErrorMessages.push(pushToData)
+            }
+        },
+        async fetchFilteredExpensesList(bank) {
+            try {
+                this.currentSelectedBankId = bank.bankId
+                const resp = await axios.get(`${this.TM_BACKEND_URL}expenses/`, {
+                    params: {
+                        bank_id: this.currentSelectedBankId
+                    }
+                })
+                if (resp) {
+                    this.filteredExpensesList = resp?.data?.expenses
+                    this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
+                }
+            } catch (err) {
+                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showAlert = true
+                this.alertErrorMessages.push(pushToData)
+            }
+        },
+        async fetchExpenses(data) {
+            data['bank_id'] = this.currentSelectedBankId
+            try {
+                const resp = await axios.get(`${this.TM_BACKEND_URL}expenses/`, {
+                    params: data
+                })
+                if (resp) {
+                    this.filteredExpensesList = resp?.data?.expenses
+                    this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
+                }
+            } catch (err) {
                 const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)

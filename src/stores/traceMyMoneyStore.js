@@ -311,7 +311,9 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 this.currentSelectedBankId = bank.bankId
                 const resp = await axios.get(`${this.TM_BACKEND_URL}expenses/`, {
                     params: {
-                        bank_id: this.currentSelectedBankId
+                        "per_page": this.pageSize,
+                        "page_number": this.pageNumber,
+                        "bank_id": this.currentSelectedBankId
                     }
                 })
                 if (resp) {
@@ -324,11 +326,14 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 this.alertErrorMessages.push(pushToData)
             }
         },
-        async fetchExpenses(data) {
-            data['bank_id'] = this.currentSelectedBankId
+        async fetchExpenses() {
             try {
                 const resp = await axios.get(`${this.TM_BACKEND_URL}expenses/`, {
-                    params: data
+                    params: {
+                        "per_page": this.pageSize,
+                        "page_number": this.pageNumber,
+                        "bank_id": this.currentSelectedBankId
+                    }
                 })
                 if (resp) {
                     this.filteredExpensesList = resp?.data?.expenses

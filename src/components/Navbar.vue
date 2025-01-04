@@ -1,13 +1,13 @@
 <template>
-    <v-app-bar scroll-behavior="hide">
+    <v-app-bar scroll-behavior="hide" >
       <v-container class="w-lg-75 w-100">
         <div class="d-flex w-lg-75 mx-auto justify-space-between align-center">
-          <span class="text-sm-h5 text-md-h4 text-h6">
+          <span class="text-sm-h5 text-md-h4 text-h6 dynapuff text-success">
             Trace My Money
           </span>
           <span>
-            <span v-if="getLoggedInStatus">
-              Hello, {{ getUserName }}
+            <span v-if="getLoggedInStatus" class="text-success dynapuff">
+              Hello@{{ getUserName }}
               <span
                 color="primary"
                 class="cursor-pointer"
@@ -59,3 +59,16 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=DynaPuff:wdth@95.6&display=swap');
+
+.dynapuff {
+  font-family: "DynaPuff", serif !important;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 95.6;
+}
+</style>

@@ -8,19 +8,23 @@
     <v-expansion-panels>
       <div class="w-100 w-lg-75 mb-5">
         <v-btn-toggle
+          rounded
           color="success border border-grey"
           class="d-flex justify-space-between"
           v-model="toggleActionsFilter"
+          elevation="8"
+          density="compact"
+          variant="outlined"
         >
-          <v-btn variant="outlined border border-right"
-            @click="showAction = !showAction"
+          <v-btn variant="outlined border border-none"
+            @click="showFilter = !showFilter"
           >Actions</v-btn>
-          <v-btn variant="outlined border border-left"
+          <v-btn variant="outlined border border-none"
             @click="showFilter = !showFilter"
           >Filters</v-btn>
         </v-btn-toggle>
       </div>
-      <div v-if="showAction" class="w-100 w-lg-75">
+      <div v-if="showFilter" class="w-100 w-lg-75">
         <v-row>
           <v-col cols="12" md="6" lg="8">
             <v-expansion-panel class="chip-container">
@@ -133,7 +137,7 @@
           </v-col>
         </v-row>
       </div>
-      <div v-if="showFilter" class="w-lg-75 w-100 d-flex justify-space-between">
+      <div v-if="!showFilter" class="w-lg-75 w-100 d-flex justify-space-between">
           <div></div>
           <div>
             <v-select
@@ -305,7 +309,7 @@ export default {
       pageSize: 5,
       showAction: false,
       showFilter: false,
-      toggleActionsFilter: true
+      toggleActionsFilter: 1
     }
   },
   components: {

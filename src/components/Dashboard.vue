@@ -63,6 +63,8 @@
                             color="primary"
                             label="Amount"
                             type="number"
+                            density="compact"
+                            class="custom-hide_input_details"
                             variant="outlined"
                           ></v-text-field>
                         </v-col>
@@ -70,6 +72,8 @@
                           <v-text-field
                             v-model="item.description"
                             color="primary"
+                            density="compact"
+                            class="custom-hide_input_details"
                             label="Description"
                             variant="outlined"
                           ></v-text-field>
@@ -80,8 +84,9 @@
                           </v-icon>
                         </v-col>
                         <v-select
-                          class="mx-3"
+                          class="mx-3 custom-hide_input_details"
                           variant="outlined"
+                          density="compact"
                           label="Select the tag"
                           v-model="item.selected_tags"
                           :items="getEntryTags"
@@ -90,7 +95,7 @@
                         </v-select>
                       </v-row>
                     </template>
-                    <div class="d-flex justify-center align-center">
+                    <div class="d-flex justify-center align-center mt-5">
                       <v-btn
                         rounded
                         variant="tonal"
@@ -144,6 +149,7 @@
               v-model="getPageSize"
               :items="[5, 10, 15, 20]"
               variant="outlined"
+              density="compact"
               @update:modelValue="onPageChange($event, 'pageSize')"
             >
             </v-select>
@@ -210,13 +216,14 @@
             <div class="w-100 mt-3">
                 <template v-for="item, index in expenseEntriesList" :key="index">
                   <v-row>
-                    <v-col cols="5">
+                    <v-col cols="5" class="custom-hide_input_details">
                       <v-text-field
                         v-model="item.amount"
                         color="primary"
                         label="Amount"
                         type="number"
                         variant="outlined"
+                        density="compact"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="7">
@@ -224,26 +231,30 @@
                         v-model="item.description"
                         color="primary"
                         label="Description"
+                        density="compact"
                         variant="outlined"
                       ></v-text-field>
                     </v-col>
-                    <v-select
-                      class="mx-3"
-                      variant="outlined"
-                      label="Select the tag"
-                      v-model="item.entry_tags"
-                      :items="getEntryTags"
-                      multiple
-                    >
-                    </v-select>
-                    <v-col cols="1">
+                  </v-row>
+                  <v-row>
+                    <v-col class="w-100 d-flex">
+                      <v-select
+                        class="w-100 mr-3"
+                        variant="outlined"
+                        label="Select the tag"
+                        density="compact"
+                        v-model="item.entry_tags"
+                        :items="getEntryTags"
+                        multiple
+                      >
+                      </v-select>
                       <v-icon @click="removeExpenseEntry(index)">
                         mdi-minus
                       </v-icon>
                     </v-col>
                   </v-row>
                 </template>
-                <div class="mt-3 d-flex justify-space-between">
+                <div class="mt-6 d-flex justify-space-between">
                   <v-btn
                     variant="outlined"
                     class=" cursor-pointer w-40 bg-dark"
@@ -486,5 +497,8 @@ export default {
   }
   .custom-hidden {
     opacity: 0;
+  }
+  .custom-hide_input_details .v-input__details {
+    display: none;
   }
 </style>

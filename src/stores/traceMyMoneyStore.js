@@ -32,6 +32,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         searchEntryKeyword: "",
         searchSelectedDaterange: null,
         searchOperator: "and",
+        currentTotalOfExpenses: 0,
         TM_BACKEND_URL: import.meta.env.VITE_TM_BACKEND_URL,
     }),
     getters: {
@@ -60,6 +61,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         getSearchSelectedBanks: (state) => state.searchSelectedBanks,
         getSearchEntryKeyword: (state) => state.searchEntryKeyword,
         getSearchSelectedDaterange: (state) => state.searchSelectedDaterange,
+        getCurrentTotalOfExpenses: (state) => state.currentTotalOfExpenses,
     },
     actions: {
         setUserName(userName) {
@@ -107,6 +109,9 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         setSearchOperator(operator){
             this.searchOperator = operator
         },
+        setCurrentTotalOfExpenses(summation) {
+            this.currentTotalOfExpenses = summation
+        },
         async getInitialData() {
             if (this.isLoggedIn) {
                 const date = new Date()
@@ -133,7 +138,10 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                         ])
                         if(responses){
                             this.expensesList = responses[0].data?.expenses
-                            this.currentTotalExpenses = this.expensesList.pop("total_expenses")["total_expenses"]
+                            const total_summation_obj = this.expensesList.pop("total_summation")
+                            const total_expenses_obj = this.expensesList.pop("total_expenses")
+                            this.currentTotalExpenses = total_expenses_obj["total_expenses"]
+                            this.currentTotalOfExpenses = total_summation_obj["total_summation"]
                             this.entryTags = responses[1].data?.entry_tags
                                                 .map(ele => ({title: ele.name, value: ele.id}))
                                                 .sort((a, b) => a.title.localeCompare(b.title));
@@ -345,6 +353,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 })
                 if (resp) {
                     this.filteredExpensesList = resp?.data?.expenses
+                    this.currentTotalOfExpenses = this.filteredExpensesList.pop("total_summation")["total_summation"]
                     this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
                 }
             } catch (err) {
@@ -364,6 +373,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 })
                 if (resp) {
                     this.filteredExpensesList = resp?.data?.expenses
+                    this.currentTotalOfExpenses = this.filteredExpensesList.pop("total_summation")["total_summation"]
                     this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
                 }
             } catch (err) {
@@ -401,6 +411,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
             )
             if(response.status == 200) {
                 this.filteredExpensesList = response?.data?.expenses
+                this.currentTotalOfExpenses = this.filteredExpensesList.pop("total_summation")["total_summation"]
                 this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
             }
         },

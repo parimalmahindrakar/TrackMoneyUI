@@ -1,6 +1,6 @@
 <template>
     <v-sheet
-      class="mx-auto w-lg-75 w-100 mb-15 mt-10"
+      class="mx-auto w-lg-75 w-100 mb-8 mt-10"
       elevation="8"
     >
         <v-slide-group

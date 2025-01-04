@@ -12,7 +12,7 @@
           color="success border border-grey"
           class="d-flex justify-space-between"
           v-model="toggleActionsFilter"
-          elevation="8"
+          elevation="3"
           density="compact"
           variant="outlined"
         >
@@ -142,20 +142,68 @@
           </v-col>
         </v-row>
       </div>
-      <div v-if="!showFilter" class="w-lg-75 w-100 d-flex justify-space-between">
-          <div></div>
-          <div>
+      <div v-if="!showFilter" class="w-lg-75 w-100">
+          <div class="d-flex justify-space-between">
+            <v-select
+              variant="outlined"
+              density="compact"
+              v-model="searchSelectedTags"
+              :items="getEntryTags"
+              label="Tags"
+              class="custom-hide_input_details mr-2 w-25"
+              multiple
+            >
+            </v-select>
+            <v-select
+              variant="outlined"
+              density="compact"
+              v-model="searchSelectedBanks"
+              :items="getBankItems"
+              class="custom-hide_input_details mr-2 w-25"
+              label="Banks"
+              multiple
+            >
+            </v-select>
+            <v-select
+              variant="outlined"
+              density="compact"
+              class="custom-hide_input_details w-40"
+              label="Daterange"
+              multiple
+            >
+            </v-select>
+          </div>
+          <div class="d-flex my-3">
+            <v-text-field
+              variant="outlined"
+              density="compact"
+              class="custom-hide_input_details mr-2 w-75"
+              label="Search by keyword"
+            >
+            </v-text-field>
             <v-select
               v-model="getPageSize"
               :items="[5, 10, 15, 20]"
               variant="outlined"
+              class="custom-hide_input_details"
               density="compact"
               @update:modelValue="onPageChange($event, 'pageSize')"
             >
             </v-select>
           </div>
+          <v-row>
+            <v-col cols="12">
+              <v-btn
+                :disabled="false"
+                class="w-100 bg-success"
+                variant="outlined"
+                >
+                Search
+              </v-btn>
+            </v-col>
+          </v-row>
       </div>
-      <div class="w-100 w-lg-75">
+      <div class="w-100 mt-5 w-lg-75">
         <v-expansion-panel
           v-for="expense in getFilteredExpensesList"
           :key="expense"
@@ -191,7 +239,7 @@
                       @click="getEntryInformation(expense, item)">
                       {{item.description}}
                       <v-icon
-                        v-if="item.entry_tags.length > 0"
+                        v-if="item.entry_tags?.length > 0"
                         size="x-small">
                         mdi-tag
                       </v-icon>
@@ -320,7 +368,9 @@ export default {
       pageSize: 5,
       showAction: false,
       showFilter: false,
-      toggleActionsFilter: 1
+      toggleActionsFilter: 1,
+      searchSelectedTags: [],
+      searchSelectedBanks: []
     }
   },
   components: {

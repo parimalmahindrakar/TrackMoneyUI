@@ -142,25 +142,29 @@
           </v-col>
         </v-row>
       </div>
+
+      <!-- Advanced Expenses Search -->
       <div v-if="!showFilter" class="w-lg-75 w-100">
           <div class="d-flex justify-space-between">
             <v-select
               variant="outlined"
               density="compact"
-              v-model="searchSelectedTags"
+              v-model="getSearchSelectedTags"
               :items="getEntryTags"
               label="Tags"
               class="custom-hide_input_details mr-2 w-25"
               multiple
+              @update:model-value="updateSearchSelectedTags($event)"
             >
             </v-select>
             <v-select
               variant="outlined"
               density="compact"
-              v-model="searchSelectedBanks"
+              v-model="getSearchSelectedBanks"
               :items="getBankItems"
               class="custom-hide_input_details mr-2 w-25"
               label="Banks"
+              @update:model-value="updateSearchSelectedBanks($event)"
               multiple
             >
             </v-select>
@@ -168,8 +172,10 @@
               variant="outlined"
               density="compact"
               class="custom-hide_input_details w-40"
+              :items="dateranges"
+              v-model="getSearchSelectedDaterange"
               label="Daterange"
-              multiple
+              @update:model-value="updateSearchSelectedDaterange($event)"
             >
             </v-select>
           </div>
@@ -177,10 +183,23 @@
             <v-text-field
               variant="outlined"
               density="compact"
-              class="custom-hide_input_details mr-2 w-75"
+              v-model="getSearchEntryKeyword"
+              class="custom-hide_input_details mr-2 w-50"
               label="Search by keyword"
+              @update:model-value="updateSearchEntryKeyword($event)"
             >
             </v-text-field>
+            <v-select
+              variant="outlined"
+              density="compact"
+              label="Operator"
+              class="custom-hide_input_details mr-2"
+              v-model="getSearchOperator"
+              :items="operatorItems"
+              @update:model-value="updateSearchOperator($event)"
+            >
+
+            </v-select>
             <v-select
               v-model="getPageSize"
               :items="[5, 10, 15, 20]"
@@ -197,6 +216,7 @@
                 :disabled="false"
                 class="w-100 bg-success"
                 variant="outlined"
+                @click="makeSoftAdvancedExpenseSearch"
                 >
                 Search
               </v-btn>
@@ -356,6 +376,9 @@ import AlertVue from './Alert.vue';
 import CreateBankDialogVue from './CreateBankDialog.vue';
 import ApplyEntryTagsVue from './ApplyEntryTags.vue';
 
+// constants
+import {DATERANGES, OPERATORS} from '../constants/constants'
+
 export default {
   data() {
     return {
@@ -369,8 +392,8 @@ export default {
       showAction: false,
       showFilter: false,
       toggleActionsFilter: 1,
-      searchSelectedTags: [],
-      searchSelectedBanks: []
+      dateranges: DATERANGES,
+      operatorItems: OPERATORS
     }
   },
   components: {
@@ -393,7 +416,12 @@ export default {
       "getAlertErrorMessages",
       "getCurrentTotalExpenses",
       "getPageNumber",
-      "getPageSize"
+      "getPageSize",
+      "getSearchSelectedTags",
+      "getSearchSelectedBanks",
+      "getSearchEntryKeyword",
+      "getSearchSelectedDaterange",
+      "getSearchOperator",
     ])
   },
   async created() {
@@ -411,7 +439,13 @@ export default {
       "setApplyEntryTagVisible",
       "fetchExpenses",
       "setPageNumber",
-      "setPageSize"
+      "setPageSize",
+      "setSearchOperator",
+      "setSearchSelectedTags",
+      "setSearchSelectedBanks",
+      "setSearchEntryKeyword",
+      "setSearchSelectedDaterange",
+      "makeAdvancedExpenseSearch"
     ]),
 
     // API related functions
@@ -485,6 +519,24 @@ export default {
         this.setPageSize(event)
       }
       this.fetchExpenses()
+    },
+    updateSearchOperator(event) {
+      this.setSearchOperator(event)
+    },
+    updateSearchSelectedTags(event) {
+      this.setSearchSelectedTags(event)
+    },
+    updateSearchSelectedBanks(event) {
+      this.setSearchSelectedBanks(event)
+    },
+    updateSearchEntryKeyword(event) {
+      this.setSearchEntryKeyword(event)
+    },
+    updateSearchSelectedDaterange(event) {
+      this.setSearchSelectedDaterange(event)
+    },
+    makeSoftAdvancedExpenseSearch() {
+      this.makeAdvancedExpenseSearch()
     }
   }
 }

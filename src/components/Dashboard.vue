@@ -340,6 +340,10 @@
         </v-expansion-panel>
       </div>
     </v-expansion-panels>
+    <div class="bg-success border rounded-sm pa-1 d-flex justify-space-between">
+      <span class="font-weight-bold">Total  : </span>
+      <span class="font-weight-bold"> {{getCurrentTotalOfExpenses}}/- </span>
+    </div>
     <v-pagination
       v-model="getPageNumber"
       :length="(getCurrentTotalExpenses / getPageSize) + 1"
@@ -422,6 +426,7 @@ export default {
       "getSearchEntryKeyword",
       "getSearchSelectedDaterange",
       "getSearchOperator",
+      "getCurrentTotalOfExpenses"
     ])
   },
   async created() {

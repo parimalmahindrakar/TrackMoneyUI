@@ -6,7 +6,21 @@
   <v-container class="mt-15 w-xl-75 w-100" v-if="getLoggedInStatus">
     <BankVue/>
     <v-expansion-panels>
-      <div class="w-100 w-lg-75">
+      <div class="w-100 w-lg-75 mb-5">
+        <v-btn-toggle
+          color="success border border-grey"
+          class="d-flex justify-space-between"
+          v-model="toggleActionsFilter"
+        >
+          <v-btn variant="outlined border border-right"
+            @click="showAction = !showAction"
+          >Actions</v-btn>
+          <v-btn variant="outlined border border-left"
+            @click="showFilter = !showFilter"
+          >Filters</v-btn>
+        </v-btn-toggle>
+      </div>
+      <div v-if="showAction" class="w-100 w-lg-75">
         <v-row>
           <v-col cols="12" md="6" lg="8">
             <v-expansion-panel class="chip-container">
@@ -119,7 +133,7 @@
           </v-col>
         </v-row>
       </div>
-      <div class="w-lg-75 w-100 d-flex justify-space-between">
+      <div v-if="showFilter" class="w-lg-75 w-100 d-flex justify-space-between">
           <div></div>
           <div>
             <v-select
@@ -130,7 +144,7 @@
             >
             </v-select>
           </div>
-        </div>
+      </div>
       <div class="w-100 w-lg-75">
         <v-expansion-panel
           v-for="expense in getFilteredExpensesList"
@@ -288,7 +302,10 @@ export default {
       initialExpenseEntriesList: reactive([]),
       applyTagInfo: reactive({}),
       pageNumber: 1,
-      pageSize: 5
+      pageSize: 5,
+      showAction: false,
+      showFilter: false,
+      toggleActionsFilter: true
     }
   },
   components: {

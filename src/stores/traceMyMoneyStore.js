@@ -25,6 +25,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         currentSelectedBankId: null,
         pageNumber: 1,
         pageSize: 5,
+        showLoader: false,
 
         // advanced expenses searching variables
         searchSelectedTags: [],
@@ -62,6 +63,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         getSearchEntryKeyword: (state) => state.searchEntryKeyword,
         getSearchSelectedDaterange: (state) => state.searchSelectedDaterange,
         getCurrentTotalOfExpenses: (state) => state.currentTotalOfExpenses,
+        getShowLoader: (state) => state.showLoader
     },
     actions: {
         setUserName(userName) {
@@ -112,8 +114,12 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         setCurrentTotalOfExpenses(summation) {
             this.currentTotalOfExpenses = summation
         },
+        setShowLoader(status) {
+            this.showLoader = status
+        },
         async getInitialData() {
             if (this.isLoggedIn) {
+                this.showLoader = true
                 const date = new Date()
                 this.expenseEntryCreationDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} 00:00`
 
@@ -146,10 +152,12 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                                                     .map(ele => ({title: ele.name, value: ele.id}))
                                                     .sort((a, b) => a.title.localeCompare(b.title));
                                 this.filteredExpensesList = this.expensesList
+                                this.showLoader = false
                             }
                         }
                     }
                 } catch(error) {
+                    this.showLoader = false
                     const pushToData = handleError(error)
                     this.showAlert = true
                     this.alertErrorMessages.push(pushToData)
@@ -158,6 +166,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         },
         async deleteExpense(expenseId) {
             try {
+                this.showLoader = true
                 const expensesResponse = await axios.delete("expenses/delete",
                     {
                         params: {
@@ -170,6 +179,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     window.location.reload()
                 }
             } catch(err) {
+                this.showLoader = false
                 const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
@@ -177,6 +187,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         },
         async deleteExpenseEnrty(expenseId, expenseEntryId) {
             try {
+                this.showLoader = true
                 const expensesResponse = await axios.delete("expenses/delete-entry",
                     {
                         params: {
@@ -190,6 +201,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     window.location.reload()
                 }
             } catch(err) {
+                this.showLoader = false
                 const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
@@ -197,6 +209,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         },
         async createNewTag(tagName) {
             try {
+                this.showLoader = true
                 const entryTagsResponse = await axios.post("entry-tags/create",
                     { "name": tagName },
                     { baseURL: this.TM_BACKEND_URL }
@@ -205,12 +218,14 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     window.location.reload()
                 }
             } catch(err) {
+                this.showLoader = false
                 const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             }
         },
         async submitExpenseEntry(expenseId, expenseEntriesList){
+            this.showLoader = true
             axios.patch("expenses/add-entry",
                 expenseEntriesList,
                 {
@@ -224,12 +239,14 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     window.location.reload()
                 }
             }).catch(err => {
+                this.showLoader = false
                 const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             })
         },
         async submitExpense(data) {
+            this.showLoader = true
             data["created_at"] = this.expenseEntryCreationDate
             axios.post("expenses/create",
                 data,
@@ -239,12 +256,14 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     window.location.reload()
                 }
             }).catch(err => {
+                this.showLoader = false
                 const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             })
         },
         async loginUser(data) {
+            this.showLoader = true
             axios.post("login",
                 data,
                 { baseURL: this.TM_BACKEND_URL }
@@ -253,12 +272,14 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 fetchAccessToken()
                 location.reload()
             }).catch(err => {
+                this.showLoader = false
                 const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             })
         },
         async registerUser(data) {
+            this.showLoader = true
             axios.post("register",
                 data,
                 { baseURL: this.TM_BACKEND_URL }
@@ -267,12 +288,14 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     location.reload()
                 }
             }).catch(err => {
+                this.showLoader = false
                 const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             })
         },
         async createBank(data) {
+            this.showLoader = true
             const updatedData = {
                 ...data,
                 ...{
@@ -289,6 +312,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     location.reload()
                 }
             } catch(err) {
+                this.showLoader = false
                 const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
@@ -296,6 +320,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         },
         async deleteBank(bankId) {
             try {
+                this.showLoader = true
                 const expensesResponse = await axios.delete("banks/delete",
                     {
                         params: {
@@ -308,6 +333,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     window.location.reload()
                 }
             } catch(err) {
+                this.showLoader = false
                 const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
@@ -315,6 +341,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         },
         async applyTagsToExpenseEntry(data) {
             try {
+                this.showLoader = true
                 const response = await axios.patch("expenses/update-entry",
                     data,
                     { baseURL: this.TM_BACKEND_URL }
@@ -323,6 +350,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     location.reload()
                 }
             } catch(err) {
+                this.showLoader = false
                 const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
@@ -331,6 +359,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         async fetchFilteredExpensesList(bank) {
             try {
                 this.currentSelectedBankId = bank.bankId
+                this.showLoader = true
                 const resp = await axios.get(`${this.TM_BACKEND_URL}expenses/`, {
                     params: {
                         "per_page": this.pageSize,
@@ -338,12 +367,14 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                         "bank_id": this.currentSelectedBankId
                     }
                 })
-                if (resp) {
+                if (resp.status == 200) {
+                    this.showLoader = false
                     this.filteredExpensesList = resp?.data?.expenses
                     this.currentTotalOfExpenses = this.filteredExpensesList.pop("total_summation")["total_summation"]
                     this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
                 }
             } catch (err) {
+                this.showLoader = false
                 const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
@@ -351,6 +382,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         },
         async fetchExpenses() {
             try {
+                this.showLoader = true
                 const resp = await axios.get(`${this.TM_BACKEND_URL}expenses/`, {
                     params: {
                         "per_page": this.pageSize,
@@ -358,12 +390,14 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                         "bank_id": this.currentSelectedBankId
                     }
                 })
-                if (resp) {
+                if (resp.status === 200) {
+                    this.showLoader = false
                     this.filteredExpensesList = resp?.data?.expenses
                     this.currentTotalOfExpenses = this.filteredExpensesList.pop("total_summation")["total_summation"]
                     this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
                 }
             } catch (err) {
+                this.showLoader = false
                 const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
@@ -371,6 +405,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         },
         async makeAdvancedExpenseSearch() {
             try {
+                this.showLoader = true
                 const data = {
                     "page_number": this.pageNumber,
                     "per_page": this.pageSize,
@@ -398,11 +433,13 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     }
                 )
                 if(response.status == 200) {
+                    this.showLoader = false
                     this.filteredExpensesList = response?.data?.expenses
                     this.currentTotalOfExpenses = this.filteredExpensesList.pop("total_summation")["total_summation"]
                     this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
                 }
             } catch(err) {
+                this.showLoader = false
                 const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)

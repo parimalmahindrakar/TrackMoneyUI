@@ -273,7 +273,9 @@
                       {{item.description}}
                       <v-icon
                         v-if="item.entry_tags?.length > 0"
-                        size="x-small">
+                        size="x-small"
+                        color="success"
+                      >
                         mdi-tag
                       </v-icon>
                     </span>
@@ -353,9 +355,9 @@
         </v-expansion-panel>
       </div>
     </v-expansion-panels>
-    <div class="bg-success border rounded-sm pa-1 d-flex justify-space-between">
-      <span class="font-weight-bold">Total  : </span>
-      <span class="font-weight-bold"> {{getCurrentTotalOfExpenses}}/- </span>
+    <div class="border rounded-sm pa-1 mt-2 d-flex justify-space-between bg-green-accent-1 w-lg-75 w-100 mx-auto">
+      <span class="font-weight-bold text-green-darken-2">Total  : </span>
+      <span class="font-weight-bold text-green-darken-2"> {{getCurrentTotalOfExpenses}}/- </span>
     </div>
     <v-pagination
       v-model="getPageNumber"

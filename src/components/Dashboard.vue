@@ -202,7 +202,7 @@
             </v-select>
             <v-select
               v-model="getPageSize"
-              :items="[5, 10, 15, 20]"
+              :items="pazeSizes"
               variant="outlined"
               class="custom-hide_input_details"
               density="compact"
@@ -393,7 +393,7 @@ import CreateBankDialogVue from './CreateBankDialog.vue';
 import ApplyEntryTagsVue from './ApplyEntryTags.vue';
 
 // constants
-import {DATERANGES, OPERATORS} from '../constants/constants'
+import {DATERANGES, OPERATORS, PAGE_SIZES} from '../constants/constants'
 
 export default {
   data() {
@@ -409,7 +409,8 @@ export default {
       showFilter: false,
       toggleActionsFilter: 1,
       dateranges: DATERANGES,
-      operatorItems: OPERATORS
+      operatorItems: OPERATORS,
+      pazeSizes: PAGE_SIZES
     }
   },
   components: {

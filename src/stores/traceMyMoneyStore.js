@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from "axios";
 import { fetchAccessToken, getDateRange, handleError } from '@/helper/helper';
+import { ALL } from '@/constants/constants'
 
 export const traceMyMoneyStore = defineStore("traceMyMoney", {
     state: () => ({
@@ -383,9 +384,13 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         async fetchExpenses() {
             try {
                 this.showLoader = true
+                let localPageSize = this.pageSize
+                if (this.pageSize === ALL) {
+                    localPageSize = this.currentTotalExpenses * 100
+                }
                 const resp = await axios.get(`${this.TM_BACKEND_URL}expenses/`, {
                     params: {
-                        "per_page": this.pageSize,
+                        "per_page": localPageSize,
                         "page_number": this.pageNumber,
                         "bank_id": this.currentSelectedBankId
                     }
@@ -406,9 +411,13 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         async makeAdvancedExpenseSearch() {
             try {
                 this.showLoader = true
+                let localPageSize = this.pageSize
+                if (this.pageSize === ALL) {
+                    localPageSize = this.currentTotalExpenses * 100
+                }
                 const data = {
                     "page_number": this.pageNumber,
-                    "per_page": this.pageSize,
+                    "per_page": localPageSize,
                     "operator": this.searchOperator,
                     "advanced_search": true
                 }

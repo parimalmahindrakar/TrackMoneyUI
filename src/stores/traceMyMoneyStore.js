@@ -35,6 +35,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         searchSelectedDaterange: null,
         searchOperator: "and",
         currentTotalOfExpenses: 0,
+        isAdvancedSearch: false,
         TM_BACKEND_URL: import.meta.env.VITE_TM_BACKEND_URL,
     }),
     getters: {
@@ -64,6 +65,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         getSearchEntryKeyword: (state) => state.searchEntryKeyword,
         getSearchSelectedDaterange: (state) => state.searchSelectedDaterange,
         getCurrentTotalOfExpenses: (state) => state.currentTotalOfExpenses,
+        getIsAdvancedSearch: (state) => state.isAdvancedSearch,
         getShowLoader: (state) => state.showLoader
     },
     actions: {
@@ -117,6 +119,9 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         },
         setShowLoader(status) {
             this.showLoader = status
+        },
+        setAdvancedSearch(status) {
+            this.isAdvancedSearch = status
         },
         async getInitialData() {
             if (this.isLoggedIn) {
@@ -392,11 +397,31 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 if (this.pageSize === ALL) {
                     localPageSize = this.currentTotalExpenses * 100
                 }
+                const data = {
+                    "page_number": this.pageNumber,
+                    "per_page": localPageSize,
+                    "operator": this.searchOperator,
+                    "advanced_search": this.isAdvancedSearch
+                }
+                if (this.isAdvancedSearch) {
+                    if (this.searchSelectedTags?.length > 0) {
+                        data["search_by_tags"] = this.searchSelectedTags
+                    }
+                    if (this.searchSelectedBanks?.length > 0) {
+                        data["search_by_bank_ids"] = this.searchSelectedBanks
+                    }
+                    if (this.searchEntryKeyword) {
+                        data["search_by_keyword"] = this.searchEntryKeyword
+                    }
+                    if (this.searchSelectedDaterange) {
+                        data["search_by_daterange"] = getDateRange(this.searchSelectedDaterange)
+                    }
+                } else {
+                    data["bank_id"] = this.currentSelectedBankId
+                }
                 const resp = await axios.get(`${this.TM_BACKEND_URL}expenses/`, {
                     params: {
-                        "per_page": localPageSize,
-                        "page_number": this.pageNumber,
-                        "bank_id": this.currentSelectedBankId
+                        "data": JSON.stringify(data)
                     }
                 })
                 if (resp.status === 200) {
@@ -406,52 +431,6 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
                 }
             } catch (err) {
-                this.showLoader = false
-                const pushToData = handleError(err)
-                this.showAlert = true
-                this.alertErrorMessages.push(pushToData)
-            }
-        },
-        async makeAdvancedExpenseSearch() {
-            try {
-                this.showLoader = true
-                let localPageSize = this.pageSize
-                if (this.pageSize === ALL) {
-                    localPageSize = this.currentTotalExpenses * 100
-                }
-                const data = {
-                    "page_number": this.pageNumber,
-                    "per_page": localPageSize,
-                    "operator": this.searchOperator,
-                    "advanced_search": true
-                }
-                if (this.searchSelectedTags?.length > 0) {
-                    data["search_by_tags"] = this.searchSelectedTags
-                }
-                if (this.searchSelectedBanks?.length > 0) {
-                    data["search_by_bank_ids"] = this.searchSelectedBanks
-                }
-                if (this.searchEntryKeyword) {
-                    data["search_by_keyword"] = this.searchEntryKeyword
-                }
-                if (this.searchSelectedDaterange) {
-                    data["search_by_daterange"] = getDateRange(this.searchSelectedDaterange)
-                }
-                const response = await axios.get("expenses/",
-                    {
-                        baseURL: this.TM_BACKEND_URL,
-                        params: {
-                            "data": JSON.stringify(data)
-                        }
-                    }
-                )
-                if(response.status == 200) {
-                    this.showLoader = false
-                    this.filteredExpensesList = response?.data?.expenses
-                    this.currentTotalOfExpenses = this.filteredExpensesList.pop("total_summation")["total_summation"]
-                    this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
-                }
-            } catch(err) {
                 this.showLoader = false
                 const pushToData = handleError(err)
                 this.showAlert = true

@@ -175,6 +175,7 @@
               :items="dateranges"
               v-model="getSearchSelectedDaterange"
               label="Daterange"
+              clearable
               @update:model-value="updateSearchSelectedDaterange($event)"
             >
             </v-select>

@@ -2,7 +2,9 @@
     <v-app-bar scroll-behavior="hide" >
       <v-container class="w-lg-75 w-100">
         <div class="d-flex w-lg-75 mx-auto justify-space-between align-center">
-          <span class="text-sm-h5 text-md-h4 text-h6 dynapuff text-success">
+          <span
+            @click="reloadPage"
+            class="text-sm-h5 text-md-h4 text-h6 cursor-pointer dynapuff text-success">
             Trace My Money
           </span>
           <span>
@@ -56,6 +58,9 @@ export default {
         "logoutUser",
         "setLoginPageStatus",
       ]),
+      reloadPage() {
+        location.reload()
+      }
     }
 }
 </script>

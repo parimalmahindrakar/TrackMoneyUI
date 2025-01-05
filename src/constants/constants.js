@@ -25,3 +25,13 @@ export const DATERANGES = [
     'value': 'last_week'
   }
 ];
+
+export const PAGE_SIZES = [
+    {title:  5, value: 5},
+    {title: 10, value: 10},
+    {title: 15, value: 15},
+    {title: 20, value: 20},
+    {title: "ALL", value: "all"}
+]
+
+export const ALL = 'all';

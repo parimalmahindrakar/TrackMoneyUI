@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from "axios";
-import { fetchAccessToken, getDateRange } from '@/helper/helper';
+import { fetchAccessToken, getDateRange, handleError } from '@/helper/helper';
+import { ALL } from '@/constants/constants'
 
 export const traceMyMoneyStore = defineStore("traceMyMoney", {
     state: () => ({
@@ -25,6 +26,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         currentSelectedBankId: null,
         pageNumber: 1,
         pageSize: 5,
+        showLoader: false,
 
         // advanced expenses searching variables
         searchSelectedTags: [],
@@ -62,6 +64,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         getSearchEntryKeyword: (state) => state.searchEntryKeyword,
         getSearchSelectedDaterange: (state) => state.searchSelectedDaterange,
         getCurrentTotalOfExpenses: (state) => state.currentTotalOfExpenses,
+        getShowLoader: (state) => state.showLoader
     },
     actions: {
         setUserName(userName) {
@@ -112,8 +115,12 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         setCurrentTotalOfExpenses(summation) {
             this.currentTotalOfExpenses = summation
         },
+        setShowLoader(status) {
+            this.showLoader = status
+        },
         async getInitialData() {
             if (this.isLoggedIn) {
+                this.showLoader = true
                 const date = new Date()
                 this.expenseEntryCreationDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} 00:00`
 
@@ -126,43 +133,41 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                             "bankId": ele.id
                         }));
                         this.bankItems = this.banksList.map(ele => ({ title: ele.bankName, value: ele.bankId }))
-                        this.currentSelectedBankId = this.bankItems[0].value
-
-                        const responses = await Promise.all([
-                            axios.get(`${this.TM_BACKEND_URL}expenses/`, {
-                                params: {
-                                    bank_id: this.currentSelectedBankId
-                                }
-                            }),
-                            axios.get(`${this.TM_BACKEND_URL}entry-tags/`),
-                        ])
-                        if(responses){
-                            this.expensesList = responses[0].data?.expenses
-                            const total_summation_obj = this.expensesList.pop("total_summation")
-                            const total_expenses_obj = this.expensesList.pop("total_expenses")
-                            this.currentTotalExpenses = total_expenses_obj["total_expenses"]
-                            this.currentTotalOfExpenses = total_summation_obj["total_summation"]
-                            this.entryTags = responses[1].data?.entry_tags
-                                                .map(ele => ({title: ele.name, value: ele.id}))
-                                                .sort((a, b) => a.title.localeCompare(b.title));
-                            this.filteredExpensesList = this.expensesList
+                        this.currentSelectedBankId = this.bankItems[0]?.value
+                        if (this.currentSelectedBankId) {
+                            const responses = await Promise.all([
+                                axios.get(`${this.TM_BACKEND_URL}expenses/`, {
+                                    params: {
+                                        bank_id: this.currentSelectedBankId
+                                    }
+                                }),
+                                axios.get(`${this.TM_BACKEND_URL}entry-tags/`),
+                            ])
+                            if(responses){
+                                this.expensesList = responses[0].data?.expenses
+                                const total_summation_obj = this.expensesList.pop("total_summation")
+                                const total_expenses_obj = this.expensesList.pop("total_expenses")
+                                this.currentTotalExpenses = total_expenses_obj["total_expenses"]
+                                this.currentTotalOfExpenses = total_summation_obj["total_summation"]
+                                this.entryTags = responses[1].data?.entry_tags
+                                                    .map(ele => ({title: ele.name, value: ele.id}))
+                                                    .sort((a, b) => a.title.localeCompare(b.title));
+                                this.filteredExpensesList = this.expensesList
+                                this.showLoader = false
+                            }
                         }
                     }
                 } catch(error) {
-                    if (error.status == 401) {
-                        if (localStorage.getItem("access_token")) {
-                            localStorage.removeItem("access_token")
-                            this.showAlert = true
-                            this.alertErrorMessages.push("Please login")
-                        }
-                        // token might be expired hence removing if exists
-                        fetchAccessToken()
-                    }
+                    this.showLoader = false
+                    const pushToData = handleError(error)
+                    this.showAlert = true
+                    this.alertErrorMessages.push(pushToData)
                 }
             }
         },
         async deleteExpense(expenseId) {
             try {
+                this.showLoader = true
                 const expensesResponse = await axios.delete("expenses/delete",
                     {
                         params: {
@@ -175,13 +180,15 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     window.location.reload()
                 }
             } catch(err) {
-                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showLoader = false
+                const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             }
         },
         async deleteExpenseEnrty(expenseId, expenseEntryId) {
             try {
+                this.showLoader = true
                 const expensesResponse = await axios.delete("expenses/delete-entry",
                     {
                         params: {
@@ -195,13 +202,15 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     window.location.reload()
                 }
             } catch(err) {
-                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showLoader = false
+                const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             }
         },
         async createNewTag(tagName) {
             try {
+                this.showLoader = true
                 const entryTagsResponse = await axios.post("entry-tags/create",
                     { "name": tagName },
                     { baseURL: this.TM_BACKEND_URL }
@@ -210,12 +219,14 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     window.location.reload()
                 }
             } catch(err) {
-                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showLoader = false
+                const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             }
         },
         async submitExpenseEntry(expenseId, expenseEntriesList){
+            this.showLoader = true
             axios.patch("expenses/add-entry",
                 expenseEntriesList,
                 {
@@ -229,12 +240,14 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     window.location.reload()
                 }
             }).catch(err => {
-                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showLoader = false
+                const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             })
         },
         async submitExpense(data) {
+            this.showLoader = true
             data["created_at"] = this.expenseEntryCreationDate
             axios.post("expenses/create",
                 data,
@@ -244,12 +257,14 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     window.location.reload()
                 }
             }).catch(err => {
-                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showLoader = false
+                const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             })
         },
         async loginUser(data) {
+            this.showLoader = true
             axios.post("login",
                 data,
                 { baseURL: this.TM_BACKEND_URL }
@@ -258,12 +273,14 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 fetchAccessToken()
                 location.reload()
             }).catch(err => {
-                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showLoader = false
+                const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             })
         },
         async registerUser(data) {
+            this.showLoader = true
             axios.post("register",
                 data,
                 { baseURL: this.TM_BACKEND_URL }
@@ -272,20 +289,14 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     location.reload()
                 }
             }).catch(err => {
-                let pushToData = err?.message
-                if (err.status == 400 && Array.isArray(err?.response?.data?.errors)) {
-                    const errorResponse = err?.response?.data?.errors[0]
-                    const errorResponseMessage = Object.keys(errorResponse)
-                            .map(field => `${field.charAt(0).toUpperCase() + field.slice(1)}: ${errorResponse[field]}`)
-                            .join(", ")
-                    pushToData = errorResponseMessage
-                }
-
+                this.showLoader = false
+                const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             })
         },
         async createBank(data) {
+            this.showLoader = true
             const updatedData = {
                 ...data,
                 ...{
@@ -302,13 +313,15 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     location.reload()
                 }
             } catch(err) {
-                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showLoader = false
+                const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             }
         },
         async deleteBank(bankId) {
             try {
+                this.showLoader = true
                 const expensesResponse = await axios.delete("banks/delete",
                     {
                         params: {
@@ -321,13 +334,15 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     window.location.reload()
                 }
             } catch(err) {
-                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showLoader = false
+                const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             }
         },
         async applyTagsToExpenseEntry(data) {
             try {
+                this.showLoader = true
                 const response = await axios.patch("expenses/update-entry",
                     data,
                     { baseURL: this.TM_BACKEND_URL }
@@ -336,7 +351,8 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                     location.reload()
                 }
             } catch(err) {
-                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showLoader = false
+                const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             }
@@ -344,6 +360,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         async fetchFilteredExpensesList(bank) {
             try {
                 this.currentSelectedBankId = bank.bankId
+                this.showLoader = true
                 const resp = await axios.get(`${this.TM_BACKEND_URL}expenses/`, {
                     params: {
                         "per_page": this.pageSize,
@@ -351,68 +368,90 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                         "bank_id": this.currentSelectedBankId
                     }
                 })
-                if (resp) {
+                if (resp.status == 200) {
+                    this.showLoader = false
                     this.filteredExpensesList = resp?.data?.expenses
                     this.currentTotalOfExpenses = this.filteredExpensesList.pop("total_summation")["total_summation"]
                     this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
                 }
             } catch (err) {
-                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showLoader = false
+                const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             }
         },
         async fetchExpenses() {
             try {
+                this.showLoader = true
+                let localPageSize = this.pageSize
+                if (this.pageSize === ALL) {
+                    localPageSize = this.currentTotalExpenses * 100
+                }
                 const resp = await axios.get(`${this.TM_BACKEND_URL}expenses/`, {
                     params: {
-                        "per_page": this.pageSize,
+                        "per_page": localPageSize,
                         "page_number": this.pageNumber,
                         "bank_id": this.currentSelectedBankId
                     }
                 })
-                if (resp) {
+                if (resp.status === 200) {
+                    this.showLoader = false
                     this.filteredExpensesList = resp?.data?.expenses
                     this.currentTotalOfExpenses = this.filteredExpensesList.pop("total_summation")["total_summation"]
                     this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
                 }
             } catch (err) {
-                const pushToData = err.status == 400 ? err?.response?.data?.error : err?.message
+                this.showLoader = false
+                const pushToData = handleError(err)
                 this.showAlert = true
                 this.alertErrorMessages.push(pushToData)
             }
         },
         async makeAdvancedExpenseSearch() {
-            const data = {
-                "page_number": this.pageNumber,
-                "per_page": this.pageSize,
-                "operator": this.searchOperator,
-                "advanced_search": true
-            }
-            if (this.searchSelectedTags?.length > 0) {
-                data["search_by_tags"] = this.searchSelectedTags
-            }
-            if (this.searchSelectedBanks?.length > 0) {
-                data["search_by_bank_ids"] = this.searchSelectedBanks
-            }
-            if (this.searchEntryKeyword) {
-                data["search_by_keyword"] = this.searchEntryKeyword
-            }
-            if (this.searchSelectedDaterange) {
-                data["search_by_daterange"] = getDateRange(this.searchSelectedDaterange)
-            }
-            const response = await axios.get("expenses/",
-                {
-                    baseURL: this.TM_BACKEND_URL,
-                    params: {
-                        "data": JSON.stringify(data)
-                    }
+            try {
+                this.showLoader = true
+                let localPageSize = this.pageSize
+                if (this.pageSize === ALL) {
+                    localPageSize = this.currentTotalExpenses * 100
                 }
-            )
-            if(response.status == 200) {
-                this.filteredExpensesList = response?.data?.expenses
-                this.currentTotalOfExpenses = this.filteredExpensesList.pop("total_summation")["total_summation"]
-                this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
+                const data = {
+                    "page_number": this.pageNumber,
+                    "per_page": localPageSize,
+                    "operator": this.searchOperator,
+                    "advanced_search": true
+                }
+                if (this.searchSelectedTags?.length > 0) {
+                    data["search_by_tags"] = this.searchSelectedTags
+                }
+                if (this.searchSelectedBanks?.length > 0) {
+                    data["search_by_bank_ids"] = this.searchSelectedBanks
+                }
+                if (this.searchEntryKeyword) {
+                    data["search_by_keyword"] = this.searchEntryKeyword
+                }
+                if (this.searchSelectedDaterange) {
+                    data["search_by_daterange"] = getDateRange(this.searchSelectedDaterange)
+                }
+                const response = await axios.get("expenses/",
+                    {
+                        baseURL: this.TM_BACKEND_URL,
+                        params: {
+                            "data": JSON.stringify(data)
+                        }
+                    }
+                )
+                if(response.status == 200) {
+                    this.showLoader = false
+                    this.filteredExpensesList = response?.data?.expenses
+                    this.currentTotalOfExpenses = this.filteredExpensesList.pop("total_summation")["total_summation"]
+                    this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
+                }
+            } catch(err) {
+                this.showLoader = false
+                const pushToData = handleError(err)
+                this.showAlert = true
+                this.alertErrorMessages.push(pushToData)
             }
         },
         logoutUser() {

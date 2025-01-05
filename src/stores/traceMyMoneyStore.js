@@ -361,9 +361,13 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
             try {
                 this.currentSelectedBankId = bank.bankId
                 this.showLoader = true
+                let localPageSize = this.pageSize
+                if (this.pageSize === ALL) {
+                    localPageSize = this.currentTotalExpenses * 100
+                }
                 const resp = await axios.get(`${this.TM_BACKEND_URL}expenses/`, {
                     params: {
-                        "per_page": this.pageSize,
+                        "per_page": localPageSize,
                         "page_number": this.pageNumber,
                         "bank_id": this.currentSelectedBankId
                     }

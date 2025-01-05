@@ -226,7 +226,8 @@
             <div>
               <v-btn
                 variant="outlined"
-                color="success"
+                :class="getIsAdvancedSearch ? 'bg-success text-white border border-1' : 'bg-white text-green'"
+                @click="resetAdvancedSearch"
               >
                 <v-icon
                 >
@@ -396,7 +397,13 @@ import CreateBankDialogVue from './CreateBankDialog.vue';
 import ApplyEntryTagsVue from './ApplyEntryTags.vue';
 
 // constants
-import {DATERANGES, OPERATORS, PAGE_SIZES} from '../constants/constants'
+import {
+  DATERANGES,
+  OPERATORS,
+  PAGE_SIZES,
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_SIZE
+} from '../constants/constants'
 
 export default {
   data() {
@@ -442,7 +449,8 @@ export default {
       "getSearchEntryKeyword",
       "getSearchSelectedDaterange",
       "getSearchOperator",
-      "getCurrentTotalOfExpenses"
+      "getCurrentTotalOfExpenses",
+      "getIsAdvancedSearch"
     ])
   },
   async created() {
@@ -466,7 +474,7 @@ export default {
       "setSearchSelectedBanks",
       "setSearchEntryKeyword",
       "setSearchSelectedDaterange",
-      "makeAdvancedExpenseSearch"
+      "setAdvancedSearch"
     ]),
 
     // API related functions
@@ -557,7 +565,18 @@ export default {
       this.setSearchSelectedDaterange(event)
     },
     makeSoftAdvancedExpenseSearch() {
-      this.makeAdvancedExpenseSearch()
+      this.setAdvancedSearch(true)
+      this.fetchExpenses()
+    },
+    resetAdvancedSearch() {
+      this.setPageNumber(DEFAULT_PAGE_NUMBER)
+      this.setPageSize(DEFAULT_PAGE_SIZE)
+      this.setSearchOperator("and")
+      this.setSearchSelectedTags([])
+      this.setSearchSelectedBanks([])
+      this.setSearchEntryKeyword("")
+      this.setSearchSelectedDaterange(null)
+      this.setAdvancedSearch(false)
     }
   }
 }

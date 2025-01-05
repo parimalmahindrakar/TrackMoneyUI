@@ -35,3 +35,5 @@ export const PAGE_SIZES = [
 ]
 
 export const ALL = 'all';
+export const DEFAULT_PAGE_NUMBER = 1;
+export const DEFAULT_PAGE_SIZE = 5;

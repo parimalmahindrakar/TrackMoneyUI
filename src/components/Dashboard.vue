@@ -273,7 +273,9 @@
                       {{item.description}}
                       <v-icon
                         v-if="item.entry_tags?.length > 0"
-                        size="x-small">
+                        size="x-small"
+                        color="success"
+                      >
                         mdi-tag
                       </v-icon>
                     </span>

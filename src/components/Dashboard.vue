@@ -210,18 +210,30 @@
             >
             </v-select>
           </div>
-          <v-row>
-            <v-col cols="12">
+          <div class="d-flex">
+            <div class="w-100">
               <v-btn
                 :disabled="false"
-                class="w-100 bg-success"
+                class="w-100 border-e-0"
+                color="success"
                 variant="outlined"
                 @click="makeSoftAdvancedExpenseSearch"
                 >
                 Search
               </v-btn>
-            </v-col>
-          </v-row>
+            </div>
+            <div>
+              <v-btn
+                variant="outlined"
+                color="success"
+              >
+                <v-icon
+                >
+                  mdi-refresh
+                </v-icon>
+              </v-btn>
+            </div>
+          </div>
       </div>
       <div class="w-100 mt-5 w-lg-75">
         <v-expansion-panel
@@ -357,7 +369,7 @@
       @update:modelValue="onPageChange($event, 'pageNumber')"
     ></v-pagination>
   </v-container>
-  <v-container class="mt-15 mx-3" v-else>
+  <v-container class="mt-15" v-else>
     <div class="mt-15 d-flex justify-center align-center">
       <LoginVue v-if="getLoginPageStatus"/>
       <RegisterVue v-if="!getLoginPageStatus"/>

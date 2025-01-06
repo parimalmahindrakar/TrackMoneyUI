@@ -5,25 +5,25 @@ export const OPERATORS = [
 
 export const DATERANGES = [
   {
-    'title': 'MTD',
-    'value': 'mtd'
-  },
-  {
-    'title': 'YTD',
-    'value': 'ytd'
-  },
-  {
-    'title': 'Last Month',
-    'value': 'last_month'
-  },
-  {
     'title': 'This week',
     'value': 'current_week'
   },
   {
     'title': 'Last week',
     'value': 'last_week'
-  }
+  },
+  {
+    'title': 'Month till date',
+    'value': 'mtd'
+  },
+  {
+    'title': 'Last Month',
+    'value': 'last_month'
+  },
+  {
+    'title': 'Year till date',
+    'value': 'ytd'
+  },
 ];
 
 export const PAGE_SIZES = [

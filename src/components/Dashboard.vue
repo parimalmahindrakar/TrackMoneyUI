@@ -43,12 +43,14 @@
                     :items="getBankItems"
                     v-model="selectedBank"
                     variant="outlined"
+                    density="compact"
                     label="Select the bank"
                     class="w-100"
                   ></v-select>
                   <v-text-field
                     label="Add the date"
                     variant="outlined"
+                    density="compact"
                     v-model="getExpenseEntryCreationDate"
                     @update:modelValue="changeExpenseEntryCreationDate"
                   ></v-text-field>
@@ -79,9 +81,11 @@
                           ></v-text-field>
                         </v-col>
                         <v-col cols="1">
-                          <v-icon @click="removeInitialExpenseEntry(index)">
-                            mdi-minus
-                          </v-icon>
+                          <span class="font-weight-bold" @click="removeInitialExpenseEntry(index)">
+                            <v-icon>
+                              mdi-minus
+                            </v-icon>
+                          </span>
                         </v-col>
                         <v-select
                           class="mx-3 custom-hide_input_details"
@@ -95,19 +99,19 @@
                         </v-select>
                       </v-row>
                     </template>
-                    <div class="d-flex justify-center align-center mt-5">
+                    <div class="d-flex justify-center align-center py-5 px-2">
                       <v-btn
-                        rounded
-                        variant="tonal"
+                        variant="outlined"
+                        color="success"
                         class=" mt-3 cursor-pointer bg-dark w-50 text-center"
                         @click="addInitialExpenseEntry(e)">
                         + Add entry
                       </v-btn>
                       <v-btn
-                        rounded
-                        variant="tonal"
+                        variant="outlined"
+                        color="success"
                         v-if="initialExpenseEntriesList.length >= 1"
-                        class="ml-4 mt-3 cursor-pointer bg-dark w-50"
+                        class="ml-4 mt-3  cursor-pointer bg-dark w-50"
                         @click="submitExpenseSoft">
                         Submit
                       </v-btn>
@@ -215,7 +219,7 @@
             <div class="w-100">
               <v-btn
                 :disabled="false"
-                class="w-100 mr-2"
+                class="w-100"
                 color="success"
                 variant="outlined"
                 @click="makeSoftAdvancedExpenseSearch"
@@ -223,14 +227,14 @@
                 Search
               </v-btn>
             </div>
+            &nbsp;&nbsp;
             <div>
               <v-btn
                 variant="outlined"
                 :class="getIsAdvancedSearch ? 'bg-success text-white border border-1' : 'bg-white text-green'"
                 @click="resetAdvancedSearch"
               >
-                <v-icon
-                >
+                <v-icon>
                   mdi-refresh
                 </v-icon>
               </v-btn>

@@ -43,6 +43,7 @@
                     :items="getBankItems"
                     v-model="selectedBank"
                     variant="outlined"
+                    color="success"
                     density="compact"
                     label="Select the bank"
                     class="w-100"
@@ -50,6 +51,7 @@
                   <v-text-field
                     label="Add the date"
                     variant="outlined"
+                    color="success"
                     density="compact"
                     v-model="getExpenseEntryCreationDate"
                     @update:modelValue="changeExpenseEntryCreationDate"
@@ -134,12 +136,14 @@
               <v-expansion-panel-text>
                 <v-combobox
                   clearable
+                  color="success"
+                  density="compact"
                   variant="outlined"
                   placeholder="Enter the name of tag"
                   :items="getEntryTags"
                   v-model="newEntryTag"
                 ></v-combobox>
-                <v-btn class="w-100" @click="addTag">Submit</v-btn>
+                <v-btn class="w-100" variant="outlined" color="success" @click="addTag">Submit</v-btn>
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-col>
@@ -152,6 +156,7 @@
             <v-select
               variant="outlined"
               density="compact"
+              color="success"
               v-model="getSearchSelectedTags"
               :items="getEntryTags"
               label="Tags"
@@ -163,6 +168,7 @@
             <v-select
               variant="outlined"
               density="compact"
+              color="success"
               v-model="getSearchSelectedBanks"
               :items="getBankItems"
               class="custom-hide_input_details mr-2 w-25"
@@ -174,6 +180,7 @@
             <v-select
               variant="outlined"
               density="compact"
+              color="success"
               class="custom-hide_input_details w-40"
               :items="dateranges"
               v-model="getSearchSelectedDaterange"
@@ -186,6 +193,7 @@
           <div class="d-flex my-3">
             <v-text-field
               variant="outlined"
+              color="success"
               density="compact"
               v-model="getSearchEntryKeyword"
               class="custom-hide_input_details mr-2 w-50"
@@ -196,6 +204,7 @@
             <v-select
               variant="outlined"
               density="compact"
+              color="success"
               label="Operator"
               class="custom-hide_input_details mr-2"
               v-model="getSearchOperator"
@@ -208,6 +217,7 @@
               v-model="getPageSize"
               :items="pazeSizes"
               variant="outlined"
+              color="success"
               class="custom-hide_input_details"
               density="compact"
               @update:modelValue="onPageChange($event, 'pageSize')"
@@ -341,11 +351,13 @@
                 <div class="mt-6 d-flex justify-space-between">
                   <v-btn
                     variant="outlined"
+                    color="success"
                     class=" cursor-pointer w-40 bg-dark"
                     @click="addExpenseEntry(e)">+ Add entry</v-btn>
                   <v-btn
                     v-if="expenseEntriesList.length >= 1"
                     variant="outlined"
+                    color="success"
                     class=" cursor-pointer w-40 bg-dark"
                     @click="submitExpenseEntrySoft(expense.id)">
                     Submit

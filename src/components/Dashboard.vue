@@ -215,7 +215,7 @@
             <div class="w-100">
               <v-btn
                 :disabled="false"
-                class="w-100 border-e-0"
+                class="w-100 mr-2"
                 color="success"
                 variant="outlined"
                 @click="makeSoftAdvancedExpenseSearch"

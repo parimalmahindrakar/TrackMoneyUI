@@ -158,9 +158,9 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                                                     .map(ele => ({title: ele.name, value: ele.id}))
                                                     .sort((a, b) => a.title.localeCompare(b.title));
                                 this.filteredExpensesList = this.expensesList
-                                this.showLoader = false
                             }
                         }
+                        this.showLoader = false
                     }
                 } catch(error) {
                     this.showLoader = false

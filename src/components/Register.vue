@@ -4,12 +4,14 @@
         <!-- Add the rules for the both username and password -->
         <v-text-field
           label="Enter your username"
+          color="success"
           prepend-inner-icon="mdi-account-circle"
           variant="outlined"
           v-model="userName"
         ></v-text-field>
         <v-text-field
           label="Enter your email"
+          color="success"
           prepend-inner-icon="mdi-email-outline"
           variant="outlined"
           v-model="email"
@@ -17,6 +19,7 @@
         <v-text-field
           :append-inner-icon="visiblePassword ? 'mdi-eye-off' : 'mdi-eye'"
           :type="visiblePassword ? 'text' : 'password'"
+          color="success"
           label="Enter your password"
           prepend-inner-icon="mdi-lock-outline"
           variant="outlined"
@@ -26,6 +29,7 @@
         <v-text-field
           :append-inner-icon="visibleConfirmationPassword ? 'mdi-eye-off' : 'mdi-eye'"
           :type="visibleConfirmationPassword ? 'text' : 'password'"
+          color="success"
           label="Confirm your password"
           prepend-inner-icon="mdi-lock-outline"
           variant="outlined"

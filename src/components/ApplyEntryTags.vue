@@ -4,6 +4,7 @@
       <v-card :title="`${tagInfo.description}`">
         <v-select
           class="mx-4"
+          color="success"
           label="Select the tag"
           v-model="selectedTags"
           :items="getEntryTags"
@@ -17,7 +18,7 @@
             <v-btn
               class="w-40"
               variant="outlined"
-              color="primary"
+              color="success"
               :disabled="selectedTags.length == 0"
               @click="applyTagsSoft">
               Apply tags

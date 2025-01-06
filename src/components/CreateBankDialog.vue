@@ -4,6 +4,7 @@
       <v-card title="Create the bank data">
         <v-text-field
           class="mx-4"
+          color="success"
           label="Bank Name"
           variant="outlined"
           v-model="bankName"
@@ -11,6 +12,7 @@
         ></v-text-field>
         <v-text-field
           class="mx-4"
+          color="success"
           label="Initial Balance"
           variant="outlined"
           type="number"
@@ -24,7 +26,7 @@
             <v-btn
               class="w-40"
               variant="outlined"
-              color="primary"
+              color="success"
               :disabled="!(bankName && initialBalance)"
               @click="() => { createBankSoft(false) }">
               Create Bank

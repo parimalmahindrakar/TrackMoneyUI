@@ -61,7 +61,7 @@
                       <div class="d-flex justify-space-between">
                         <v-text-field
                           v-model="item.amount"
-                          color="primary"
+                          color="success"
                           label="Amount"
                           type="number"
                           density="compact"
@@ -70,7 +70,7 @@
                         ></v-text-field>
                         <v-text-field
                           v-model="item.description"
-                          color="primary"
+                          color="success"
                           density="compact"
                           class="custom-hide_input_details w-75"
                           label="Description"
@@ -89,6 +89,7 @@
                           class="custom-hide_input_details mt-5"
                           variant="outlined"
                           density="compact"
+                          color="success"
                           label="Select the tag"
                           v-model="item.selected_tags"
                           :items="getEntryTags"
@@ -301,46 +302,41 @@
             </div>
             <div class="w-100 mt-3">
                 <template v-for="item, index in expenseEntriesList" :key="index">
-                  <v-row>
-                    <v-col cols="5">
-                      <v-text-field
-                        v-model="item.amount"
-                        color="primary"
-                        class="custom-hide_input_details"
-                        label="Amount"
-                        type="number"
-                        variant="outlined"
-                        density="compact"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="7">
-                      <v-text-field
-                        v-model="item.description"
-                        color="primary"
-                        class="custom-hide_input_details"
-                        label="Description"
-                        density="compact"
-                        variant="outlined"
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col class="w-100 d-flex">
-                      <v-select
-                        class="w-100 mr-3 custom-hide_input_details"
-                        variant="outlined"
-                        label="Select the tag"
-                        density="compact"
-                        v-model="item.entry_tags"
-                        :items="getEntryTags"
-                        multiple
-                      >
-                      </v-select>
+                  <div class="d-flex justify-space-between mt-5">
+                    <v-text-field
+                      v-model="item.amount"
+                      color="success"
+                      class="custom-hide_input_details w-25 mr-1"
+                      label="Amount"
+                      type="number"
+                      variant="outlined"
+                      density="compact"
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="item.description"
+                      color="success"
+                      class="custom-hide_input_details w-75"
+                      label="Description"
+                      density="compact"
+                      variant="outlined"
+                    ></v-text-field>
+                    <span class="border d-flex align-center ml-1">
                       <v-icon @click="removeExpenseEntry(index)">
                         mdi-minus
                       </v-icon>
-                    </v-col>
-                  </v-row>
+                    </span>
+                  </div>
+                  <v-select
+                    class="w-100 custom-hide_input_details mt-3"
+                    variant="outlined"
+                    color="success"
+                    label="Select the tag"
+                    density="compact"
+                    v-model="item.entry_tags"
+                    :items="getEntryTags"
+                    multiple
+                  >
+                  </v-select>
                 </template>
                 <div class="mt-6 d-flex justify-space-between">
                   <v-btn

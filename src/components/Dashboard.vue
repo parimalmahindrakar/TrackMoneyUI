@@ -310,7 +310,8 @@
               </div>
               <v-divider class="w-100 mx-auto mt-1"></v-divider>
             </div>
-            <div class="w-100 mt-3">
+            <div class="d-flex justify-center align-center">
+              <div class="w-100 mt-3 mx-auto">
                 <template v-for="item, index in expenseEntriesList" :key="index">
                   <div class="d-flex justify-space-between mt-5">
                     <v-text-field
@@ -352,17 +353,18 @@
                   <v-btn
                     variant="outlined"
                     color="success"
-                    class=" cursor-pointer w-40 bg-dark"
+                    class=" cursor-pointer bg-dark w-48"
                     @click="addExpenseEntry(e)">+ Add entry</v-btn>
                   <v-btn
                     v-if="expenseEntriesList.length >= 1"
                     variant="outlined"
                     color="success"
-                    class=" cursor-pointer w-40 bg-dark"
+                    class=" cursor-pointer bg-dark w-50"
                     @click="submitExpenseEntrySoft(expense.id)">
                     Submit
                   </v-btn>
                 </div>
+              </div>
             </div>
           </v-expansion-panel-text>
         </v-expansion-panel>
@@ -629,6 +631,9 @@ export default {
   }
   .w-40 {
     width: 40%;
+  }
+  .w-48 {
+    width: 48%;
   }
   .w-80 {
     width: 80%;

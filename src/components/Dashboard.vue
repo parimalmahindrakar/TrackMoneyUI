@@ -300,10 +300,11 @@
             <div class="w-100 mt-3">
                 <template v-for="item, index in expenseEntriesList" :key="index">
                   <v-row>
-                    <v-col cols="5" class="custom-hide_input_details">
+                    <v-col cols="5">
                       <v-text-field
                         v-model="item.amount"
                         color="primary"
+                        class="custom-hide_input_details"
                         label="Amount"
                         type="number"
                         variant="outlined"
@@ -314,6 +315,7 @@
                       <v-text-field
                         v-model="item.description"
                         color="primary"
+                        class="custom-hide_input_details"
                         label="Description"
                         density="compact"
                         variant="outlined"
@@ -323,7 +325,7 @@
                   <v-row>
                     <v-col class="w-100 d-flex">
                       <v-select
-                        class="w-100 mr-3"
+                        class="w-100 mr-3 custom-hide_input_details"
                         variant="outlined"
                         label="Select the tag"
                         density="compact"

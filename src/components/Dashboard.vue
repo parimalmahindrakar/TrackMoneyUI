@@ -58,48 +58,46 @@
                 <div class="d-flex justify-center align-center">
                   <div class="w-100 mx-auto">
                     <template v-for="item, index in initialExpenseEntriesList" :key="index">
-                      <v-row>
-                        <v-col cols="4">
-                          <v-text-field
-                            v-model="item.amount"
-                            color="primary"
-                            label="Amount"
-                            type="number"
-                            density="compact"
-                            class="custom-hide_input_details"
-                            variant="outlined"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="7">
-                          <v-text-field
-                            v-model="item.description"
-                            color="primary"
-                            density="compact"
-                            class="custom-hide_input_details"
-                            label="Description"
-                            variant="outlined"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="1">
-                          <span class="font-weight-bold" @click="removeInitialExpenseEntry(index)">
-                            <v-icon>
-                              mdi-minus
-                            </v-icon>
-                          </span>
-                        </v-col>
-                        <v-select
-                          class="mx-3 custom-hide_input_details"
+                      <div class="d-flex justify-space-between">
+                        <v-text-field
+                          v-model="item.amount"
+                          color="primary"
+                          label="Amount"
+                          type="number"
+                          density="compact"
+                          class="custom-hide_input_details w-25 mr-1"
+                          variant="outlined"
+                        ></v-text-field>
+                        <v-text-field
+                          v-model="item.description"
+                          color="primary"
+                          density="compact"
+                          class="custom-hide_input_details w-75"
+                          label="Description"
+                          variant="outlined"
+                        ></v-text-field>
+                        <span
+                          class="font-weight-bold border ml-1 border-red d-flex align-center rounded"
+                          @click="removeInitialExpenseEntry(index)"
+                        >
+                          <v-icon>
+                            mdi-minus
+                          </v-icon>
+                        </span>
+                      </div>
+                      <v-select
+                          class="custom-hide_input_details mt-5"
                           variant="outlined"
                           density="compact"
                           label="Select the tag"
                           v-model="item.selected_tags"
                           :items="getEntryTags"
                           multiple
-                        >
-                        </v-select>
-                      </v-row>
+                      >
+                      </v-select>
+                      <v-divider class="py-2"></v-divider>
                     </template>
-                    <div class="d-flex justify-center align-center py-5 px-2">
+                    <div class="d-flex justify-center align-center px-2">
                       <v-btn
                         variant="outlined"
                         color="success"

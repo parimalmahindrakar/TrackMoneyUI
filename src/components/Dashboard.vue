@@ -3,7 +3,7 @@
   <NavbarVue/>
   <CreateBankDialogVue/>
   <ApplyEntryTagsVue :tagInfo="applyTagInfo" />
-  <v-container class="mt-15 w-xl-75 w-100" v-if="getLoggedInStatus">
+  <v-container class="mt-9 w-xl-75 w-100" v-if="getLoggedInStatus">
     <BankVue/>
     <v-expansion-panels>
       <div class="w-100 w-lg-75 mb-5">
@@ -24,7 +24,9 @@
           >Filters</v-btn>
         </v-btn-toggle>
       </div>
-      <div v-if="showFilter" class="w-100 w-lg-75">
+      <div
+        v-if="showFilter"
+        :class="['w-100', 'w-lg-75', 'border', 'border-thin', 'pa-5', {'mb-1': toggleActionsFilter == 1}, 'mb-5']">
         <v-row>
           <v-col cols="12" md="6" lg="8">
             <v-expansion-panel class="chip-container">
@@ -123,7 +125,7 @@
             </v-expansion-panel>
           </v-col>
           <v-col cols="12" md="6" lg="4">
-            <v-expansion-panel class="chip-container mb-10">
+            <v-expansion-panel class="chip-container">
               <v-expansion-panel-title>
                 <template v-slot:default="{ expanded }">
                   <v-row no-gutters>
@@ -151,7 +153,7 @@
       </div>
 
       <!-- Advanced Expenses Search -->
-      <div v-if="!showFilter" class="w-lg-75 w-100">
+      <div v-if="!showFilter" class="w-lg-75 w-100 mb-10">
           <div class="d-flex justify-space-between">
             <v-select
               variant="outlined"
@@ -250,7 +252,7 @@
             </div>
           </div>
       </div>
-      <div class="w-100 mt-5 w-lg-75">
+      <div class="w-100 w-lg-75">
         <v-expansion-panel
           v-for="expense in getFilteredExpensesList"
           :key="expense"
@@ -274,7 +276,6 @@
               </v-row>
             </template>
           </v-expansion-panel-title>
-
           <v-expansion-panel-text>
             <v-divider class="w-100 mx-auto mb-1"></v-divider>
             <div v-for="item in expense.expenses" :key="item.id" >
@@ -430,8 +431,8 @@ export default {
       pageNumber: 1,
       pageSize: 5,
       showAction: false,
-      showFilter: false,
-      toggleActionsFilter: 1,
+      showFilter: true,
+      toggleActionsFilter: 0,
       dateranges: DATERANGES,
       operatorItems: OPERATORS,
       pazeSizes: PAGE_SIZES

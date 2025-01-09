@@ -28,7 +28,7 @@
                             </v-icon>
                         </v-chip>
                         <v-scale-transition>
-                            <v-row>
+                            <v-row class="mt-4">
                                 <v-col cols="12" class="text-center">
                                     <v-card-title class="text-h2">{{ bank.bankName }}</v-card-title>
                                 </v-col>
@@ -43,7 +43,7 @@
 
             <v-slide-group-item>
                 <v-card @click="() => {setCreateBankDialogVisible(true)}">
-                    <v-row>
+                    <v-row class="mt-2">
                         <v-col cols="12" class="text-center">
                             <v-card-title class="text-h2">
                                 <v-col cols="12" class="text-center">

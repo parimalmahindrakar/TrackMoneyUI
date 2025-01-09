@@ -271,7 +271,11 @@
                 </v-col>
                 <v-col cols="12" class="d-flex mt-2 justify-space-between">
                     <span class="font-weight-bold">Remaining : {{expense.remaining_amount_till_now}}/-</span>
-                    <span class="font-weight-bold"> {{expense.expense_total}}/-</span>
+                    <div>
+                      <span v-if="expense.topup_expense_total < 0" class="font-weight-bold">+ {{Math.abs(expense.topup_expense_total)}}/-</span>
+                      &nbsp;&nbsp;
+                      <span class="font-weight-bold"> {{expense.expense_total}}/-</span>
+                    </div>
                 </v-col>
               </v-row>
             </template>

@@ -1,7 +1,14 @@
 <template>
   <v-dialog v-model="getApplyEntryTagVisible" max-width="500">
     <template v-slot:default="{ isActive }">
-      <v-card :title="`${tagInfo.description}`">
+      <v-card title="Update Entry Information">
+        <v-text-field
+          class="mx-4"
+          color="success"
+          label="Modify the description"
+          v-model="tagInfo.description"
+        >
+        </v-text-field>
         <v-select
           class="mx-4"
           color="success"
@@ -21,7 +28,7 @@
               color="success"
               :disabled="selectedTags.length == 0"
               @click="applyTagsSoft">
-              Apply tags
+              Modify
             </v-btn>
             <v-btn class="w-40" variant="outlined" color="warning" @click="() => { setApplyEntryTagVisible(false) }">Cancel</v-btn>
           </div>
@@ -63,7 +70,8 @@ export default {
       const applyTagData = {
         "entry_id": this.tagInfo.ee_id,
         "expense_id": this.tagInfo.expenseId,
-        "selected_tags": this.selectedTags
+        "selected_tags": this.selectedTags,
+        "description": this.tagInfo.description
       }
       this.applyTagsToExpenseEntry(applyTagData)
     }

@@ -2,11 +2,30 @@
     <v-app-bar scroll-behavior="hide" >
       <v-container class="w-lg-75 w-100">
         <div class="d-flex w-lg-75 mx-auto justify-space-between align-center">
-          <span
-            @click="reloadPage"
-            class="text-sm-h5 text-md-h4 text-h6 cursor-pointer dynapuff text-success">
-            Trace My Money
-          </span>
+          <div class="d-flex align-center">
+            <span
+              @click="reloadPage"
+              class="text-sm-h5 text-md-h4 text-h6 cursor-pointer dynapuff text-success">
+              Trace My Money
+            </span>
+            &nbsp;&nbsp;
+
+            <v-icon
+                :color="isBgDark ? 'white' : 'success'"
+                :class="[
+                        'border',
+                        'border-opacity-50',
+                        'border-success',
+                        'rounded-circle',
+                        'pa-5',
+                        'cursor-pointer',
+                        isBgDark ? 'bg-success' : 'bg-white'
+                ]"
+              > mdi-sunglasses
+              </v-icon>
+
+
+          </div>
           <span>
             <span v-if="getLoggedInStatus" class="text-success dynapuff">
               Hello@{{ getUserName }}
@@ -45,6 +64,7 @@ export default {
     data() {
       return {
         toggleLogin: 0,
+        isBgDark: false
       }
     },
     computed: {

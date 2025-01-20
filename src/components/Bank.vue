@@ -42,7 +42,11 @@
             </v-slide-group-item>
 
             <v-slide-group-item>
-                <v-card @click="() => {setCreateBankDialogVisible(true)}">
+                <v-card
+                    height="300"
+                    width="300"
+                    @click="() => {setCreateBankDialogVisible(true)}"
+                >
                     <v-row class="mt-2">
                         <v-col cols="12" class="text-center">
                             <v-card-title class="text-h2">

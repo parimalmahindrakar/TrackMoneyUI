@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar scroll-behavior="hide" >
+    <v-app-bar scroll-behavior="hide" :class="[{'bg-grey-darken-4': getIsDarkMode}]">
       <v-container class="w-lg-75 w-100">
         <div class="d-flex w-lg-75 mx-auto justify-space-between align-center">
           <div class="d-flex align-center">
@@ -44,10 +44,10 @@
               <v-btn-toggle
                 color="success"
                 v-model="toggleLogin"
-                class="custom-btn-toggle"
+                :class="['custom-btn-toggle', {'bg-grey-darken-4': getIsDarkMode}]"
               >
-                <v-btn @click="() => { setLoginPageStatus(true) }" class="custom-btn">Login</v-btn>
-                <v-btn @click="() => { setLoginPageStatus(false) }" class="custom-btn">Register</v-btn>
+                <v-btn @click="() => { setLoginPageStatus(true) }" :class="['custom-btn', {'bg-grey-darken-4': getIsDarkMode}]">Login</v-btn>
+                <v-btn @click="() => { setLoginPageStatus(false) }" :class="['custom-btn', {'bg-grey-darken-4': getIsDarkMode}]">Register</v-btn>
               </v-btn-toggle>
             </div>
           </span>
@@ -71,6 +71,7 @@ export default {
       ...mapState(traceMyMoneyStore, [
         "getUserName",
         "getLoggedInStatus",
+        "getIsDarkMode"
       ])
     },
     methods: {

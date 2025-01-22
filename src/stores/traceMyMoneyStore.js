@@ -27,6 +27,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         pageNumber: 1,
         pageSize: 5,
         showLoader: false,
+        isDarkMode: true,
 
         // advanced expenses searching variables
         searchSelectedTags: [],
@@ -66,7 +67,8 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         getSearchSelectedDaterange: (state) => state.searchSelectedDaterange,
         getCurrentTotalOfExpenses: (state) => state.currentTotalOfExpenses,
         getIsAdvancedSearch: (state) => state.isAdvancedSearch,
-        getShowLoader: (state) => state.showLoader
+        getShowLoader: (state) => state.showLoader,
+        getIsDarkMode: (state) => state.isDarkMode
     },
     actions: {
         setUserName(userName) {
@@ -122,6 +124,9 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         },
         setAdvancedSearch(status) {
             this.isAdvancedSearch = status
+        },
+        setIsDarkMode(status) {
+            this.isDarkMode = status
         },
         async getInitialData() {
             if (this.isLoggedIn) {

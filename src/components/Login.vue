@@ -1,6 +1,6 @@
 <template>
   <v-sheet class="w-xl-25 w-lg-50 w-md-75 w-100" elevation=5 rounded>
-    <v-card class=" px-6 py-8">
+    <v-card :class="['px-6', 'py-8', {'bg-grey-darken-4': getIsDarkMode}]">
       <!-- Add the rules for the both username and password -->
       <v-text-field
         label="Enter your username"
@@ -48,6 +48,11 @@ export default {
       userName: reactive(''),
       password: reactive('')
     }
+  },
+  computed: {
+      ...mapState(traceMyMoneyStore, [
+          "getIsDarkMode"
+      ])
   },
   methods: {
     ...mapActions(traceMyMoneyStore, [

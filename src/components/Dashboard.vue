@@ -10,7 +10,7 @@
         <v-btn-toggle
           rounded
           color="success border border-grey"
-          class="d-flex justify-space-between"
+          :class="['d-flex', 'justify-space-between', {'bg-grey-darken-4': getIsDarkMode}]"
           v-model="toggleActionsFilter"
           elevation="3"
           density="compact"
@@ -29,7 +29,7 @@
         :class="['w-100', 'w-lg-75', 'border', 'border-thin', 'pa-5', {'mb-1': toggleActionsFilter == 1}, 'mb-5']">
         <v-row>
           <v-col cols="12" md="6" lg="8">
-            <v-expansion-panel class="chip-container">
+            <v-expansion-panel :class="['chip-container', {'bg-grey-darken-4': getIsDarkMode}]">
               <v-expansion-panel-title>
                 <template v-slot:default="{ expanded }">
                   <v-row no-gutters>
@@ -125,7 +125,7 @@
             </v-expansion-panel>
           </v-col>
           <v-col cols="12" md="6" lg="4">
-            <v-expansion-panel class="chip-container">
+            <v-expansion-panel :class="['chip-container', {'bg-grey-darken-4': getIsDarkMode}]">
               <v-expansion-panel-title>
                 <template v-slot:default="{ expanded }">
                   <v-row no-gutters>
@@ -242,7 +242,10 @@
             <div>
               <v-btn
                 variant="outlined"
-                :class="getIsAdvancedSearch ? 'bg-success text-white border border-1' : 'bg-white text-green'"
+                :class="[
+                  getIsAdvancedSearch ? 'bg-success text-white border border-1' : 'bg-white text-green',
+                  getIsDarkMode ? 'bg-grey-darken-4' : ''
+                ]"
                 @click="resetAdvancedSearch"
               >
                 <v-icon>
@@ -256,9 +259,9 @@
         <v-expansion-panel
           v-for="expense in getFilteredExpensesList"
           :key="expense"
-          class="chip-container"
+          :class="['chip-container', {'bg-grey-darken-4': getIsDarkMode}]"
         >
-          <v-expansion-panel-title class="px-2 mb-3">
+          <v-expansion-panel-title :class="['px-2', 'mb-3', {'bg-grey-darken-4': getIsDarkMode}]">
             <template v-slot:default="{ expanded }">
               <v-row no-gutters>
                 <v-col class="d-flex justify-space-between align-center" cols="12">
@@ -269,7 +272,7 @@
                     </v-chip>
                   </div>
                 </v-col>
-                <v-col cols="12" class="d-flex mt-2 justify-space-between">
+                <v-col cols="12" :class="['d-flex', 'mt-2', 'justify-space-between', {'bg-grey-darken-4': getIsDarkMode}]">
                     <span class="font-weight-bold">Remaining : {{expense.remaining_amount_till_now}}/-</span>
                     <div>
                       <span v-if="expense.topup_expense_total < 0" class="font-weight-bold">+ {{Math.abs(expense.topup_expense_total)}}/-</span>
@@ -280,7 +283,7 @@
               </v-row>
             </template>
           </v-expansion-panel-title>
-          <v-expansion-panel-text>
+          <v-expansion-panel-text :class="[{'bg-grey-darken-4': getIsDarkMode}]">
             <v-divider class="w-100 mx-auto mb-1"></v-divider>
             <div v-for="item in expense.expenses" :key="item.id" >
               <div class="d-flex flex-column justify-space-between expense-entry mx-lg-10">
@@ -376,8 +379,8 @@
       </div>
     </v-expansion-panels>
     <div class="border rounded-sm pa-1 mt-2 d-flex justify-space-between bg-green-accent-1 w-lg-75 w-100 mx-auto">
-      <span class="font-weight-bold text-green-darken-2">Total  : </span>
-      <span class="font-weight-bold text-green-darken-2"> {{getCurrentTotalOfExpenses}}/- </span>
+      <span class="font-weight-bold text-green-darken-2 ml-4">Total  : </span>
+      <span class="font-weight-bold text-green-darken-2 mr-4"> {{getCurrentTotalOfExpenses}}/- </span>
     </div>
     <v-pagination
       v-model="getPageNumber"
@@ -469,7 +472,8 @@ export default {
       "getSearchSelectedDaterange",
       "getSearchOperator",
       "getCurrentTotalOfExpenses",
-      "getIsAdvancedSearch"
+      "getIsAdvancedSearch",
+      "getIsDarkMode"
     ])
   },
   async created() {

@@ -5,7 +5,7 @@
     >
         <v-slide-group
             v-model="model"
-            class="pa-4 d-flex"
+            :class="['pa-4', 'd-flex', {'bg-grey-darken-4': getIsDarkMode}]"
             show-arrows="false"
             mobile="true"
         >
@@ -17,10 +17,9 @@
                 <div @click="handleBankClick(bank)">
                     <v-card
                         height="300"
-                        :class="isSelected ? 'bg-success' : undefined"
                         width="300"
                         @click="toggle"
-                        class="mr-4"
+                        :class="['mr-4', {'bg-grey-darken-4': getIsDarkMode}, {'bg-success': isSelected}]"
                     >
                         <v-chip color="red custom-chip" @click="deleteBankSoft(bank.bankId)">
                             <v-icon color="red">
@@ -46,6 +45,7 @@
                     height="300"
                     width="300"
                     @click="() => {setCreateBankDialogVisible(true)}"
+                    :class="[{'bg-grey-darken-4': getIsDarkMode}]"
                 >
                     <v-row class="mt-2">
                         <v-col cols="12" class="text-center">
@@ -86,6 +86,7 @@ export default {
     computed: {
         ...mapState(traceMyMoneyStore, [
             "getBanksList",
+            "getIsDarkMode"
         ])
     },
     methods: {

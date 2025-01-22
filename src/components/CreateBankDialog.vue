@@ -1,7 +1,10 @@
 <template>
   <v-dialog v-model="getCreateBankDialogVisible" max-width="500">
     <template v-slot:default="{ isActive }">
-      <v-card title="Create the bank data">
+      <v-card
+        title="Create the bank data"
+        :class="{'bg-grey-darken-4': getIsDarkMode}"
+      >
         <v-text-field
           class="mx-4"
           color="success"
@@ -52,7 +55,8 @@ export default {
   },
   computed: {
     ...mapState(traceMyMoneyStore, [
-      "getCreateBankDialogVisible"
+      "getCreateBankDialogVisible",
+      "getIsDarkMode"
     ])
   },
   methods: {

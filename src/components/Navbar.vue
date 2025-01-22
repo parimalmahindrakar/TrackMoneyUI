@@ -1,30 +1,18 @@
 <template>
-    <v-app-bar scroll-behavior="hide" >
+    <v-app-bar scroll-behavior="hide" :class="[{'bg-grey-darken-4': getIsDarkMode}]">
       <v-container class="w-lg-75 w-100">
         <div class="d-flex w-lg-75 mx-auto justify-space-between align-center">
           <div class="d-flex align-center">
+            <v-icon
+              :color="getIsDarkMode ? 'white' : 'success'"
+              @click="makeBgWhite"
+            > mdi-theme-light-dark
+            </v-icon> &nbsp;
             <span
               @click="reloadPage"
               class="text-sm-h5 text-md-h4 text-h6 cursor-pointer dynapuff text-success">
               Trace My Money
             </span>
-            &nbsp;&nbsp;
-
-            <v-icon
-                :color="isBgDark ? 'white' : 'success'"
-                :class="[
-                        'border',
-                        'border-opacity-50',
-                        'border-success',
-                        'rounded-circle',
-                        'pa-5',
-                        'cursor-pointer',
-                        isBgDark ? 'bg-success' : 'bg-white'
-                ]"
-              > mdi-sunglasses
-              </v-icon>
-
-
           </div>
           <span>
             <span v-if="getLoggedInStatus" class="text-success dynapuff">
@@ -44,10 +32,10 @@
               <v-btn-toggle
                 color="success"
                 v-model="toggleLogin"
-                class="custom-btn-toggle"
+                :class="['custom-btn-toggle', {'bg-grey-darken-4': getIsDarkMode}]"
               >
-                <v-btn @click="() => { setLoginPageStatus(true) }" class="custom-btn">Login</v-btn>
-                <v-btn @click="() => { setLoginPageStatus(false) }" class="custom-btn">Register</v-btn>
+                <v-btn @click="() => { setLoginPageStatus(true) }" :class="['custom-btn', {'bg-grey-darken-4': getIsDarkMode}]">Login</v-btn>
+                <v-btn @click="() => { setLoginPageStatus(false) }" :class="['custom-btn', {'bg-grey-darken-4': getIsDarkMode}]">Register</v-btn>
               </v-btn-toggle>
             </div>
           </span>
@@ -71,15 +59,20 @@ export default {
       ...mapState(traceMyMoneyStore, [
         "getUserName",
         "getLoggedInStatus",
+        "getIsDarkMode"
       ])
     },
     methods: {
       ...mapActions(traceMyMoneyStore, [
         "logoutUser",
         "setLoginPageStatus",
+        "setIsDarkMode"
       ]),
       reloadPage() {
         location.reload()
+      },
+      makeBgWhite(){
+        this.setIsDarkMode()
       }
     }
 }

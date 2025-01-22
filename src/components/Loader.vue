@@ -1,12 +1,12 @@
 <template>
   <v-dialog v-model="getShowLoader" max-width="500">
     <template v-slot:default="{ isActive }" >
-      <div class="pa-10 mx-auto bg-white">
+      <div :class="['pa-10','mx-auto','bg-white', {'bg-grey-darken-4': getIsDarkMode}]">
         <v-progress-circular
             :width="10"
             color="success"
             size="150"
-            class="mx-auto"
+            :class="['mx-auto', {'bg-grey-darken-4': getIsDarkMode}]"
             indeterminate
           >
           <span class="font-weight-bold text-h5">
@@ -25,7 +25,8 @@ import { mapState } from 'pinia'
 export default {
   computed: {
     ...mapState(traceMyMoneyStore, [
-      "getShowLoader"
+      "getShowLoader",
+      "getIsDarkMode"
     ])
   }
 }

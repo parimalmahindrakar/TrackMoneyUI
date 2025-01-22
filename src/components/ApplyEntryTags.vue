@@ -1,7 +1,10 @@
 <template>
   <v-dialog v-model="getApplyEntryTagVisible" max-width="500">
     <template v-slot:default="{ isActive }">
-      <v-card title="Update Entry Information">
+      <v-card
+        title="Update Entry Information"
+        :class="{'bg-grey-darken-4': getIsDarkMode}"
+      >
         <v-text-field
           class="mx-4"
           color="success"
@@ -58,7 +61,8 @@ export default {
   computed: {
     ...mapState(traceMyMoneyStore, [
       "getApplyEntryTagVisible",
-      "getEntryTags"
+      "getEntryTags",
+      "getIsDarkMode"
     ])
   },
   methods: {

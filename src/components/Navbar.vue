@@ -3,28 +3,16 @@
       <v-container class="w-lg-75 w-100">
         <div class="d-flex w-lg-75 mx-auto justify-space-between align-center">
           <div class="d-flex align-center">
+            <v-icon
+              :color="getIsDarkMode ? 'white' : 'success'"
+              @click="makeBgWhite"
+            > mdi-theme-light-dark
+            </v-icon> &nbsp;
             <span
               @click="reloadPage"
               class="text-sm-h5 text-md-h4 text-h6 cursor-pointer dynapuff text-success">
               Trace My Money
             </span>
-            &nbsp;&nbsp;
-
-            <v-icon
-                :color="isBgDark ? 'white' : 'success'"
-                :class="[
-                        'border',
-                        'border-opacity-50',
-                        'border-success',
-                        'rounded-circle',
-                        'pa-5',
-                        'cursor-pointer',
-                        isBgDark ? 'bg-success' : 'bg-white'
-                ]"
-              > mdi-sunglasses
-              </v-icon>
-
-
           </div>
           <span>
             <span v-if="getLoggedInStatus" class="text-success dynapuff">
@@ -78,9 +66,13 @@ export default {
       ...mapActions(traceMyMoneyStore, [
         "logoutUser",
         "setLoginPageStatus",
+        "setIsDarkMode"
       ]),
       reloadPage() {
         location.reload()
+      },
+      makeBgWhite(){
+        this.setIsDarkMode()
       }
     }
 }

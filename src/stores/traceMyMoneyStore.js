@@ -125,8 +125,8 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         setAdvancedSearch(status) {
             this.isAdvancedSearch = status
         },
-        setIsDarkMode(status) {
-            this.isDarkMode = status
+        setIsDarkMode() {
+            this.isDarkMode = !this.isDarkMode
         },
         async getInitialData() {
             if (this.isLoggedIn) {

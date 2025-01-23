@@ -378,9 +378,9 @@
         </v-expansion-panel>
       </div>
     </v-expansion-panels>
-    <div class="border rounded-sm pa-1 mt-2 d-flex justify-space-between bg-green-accent-1 w-lg-75 w-100 mx-auto">
-      <span class="font-weight-bold text-green-darken-2 ml-4">Total  : </span>
-      <span class="font-weight-bold text-green-darken-2 mr-4"> {{getCurrentTotalOfExpenses}}/- </span>
+    <div class="border rounded-sm pa-1 mt-2 d-flex justify-space-between bg-success w-lg-75 w-100 mx-auto">
+      <span class="font-weight-bold text-white ml-4">Total  : </span>
+      <span class="font-weight-bold text-white mr-4"> {{getCurrentTotalOfExpenses}}/- </span>
     </div>
     <v-pagination
       v-model="getPageNumber"
@@ -389,6 +389,7 @@
       class="mt-5 w-100"
       size="x-small"
       variant="elevated"
+      :color="getIsDarkMode ? 'grey-darken-4' : undefined"
       active-color="success"
       @next="onPageChange($event, 'pageNumber')"
       @prev="onPageChange($event, 'pageNumber')"

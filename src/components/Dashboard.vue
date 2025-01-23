@@ -26,7 +26,7 @@
       </div>
       <div
         v-if="showFilter"
-        :class="['w-100', 'w-lg-75', 'border', 'border-thin', 'pa-5', {'mb-1': toggleActionsFilter == 1}, 'mb-5']">
+        :class="['w-100', 'w-lg-75', {'mb-1': toggleActionsFilter == 1}, 'mb-5']">
         <v-row>
           <v-col cols="12" md="6" lg="8">
             <v-expansion-panel :class="['chip-container', {'bg-grey-darken-4': getIsDarkMode}]">

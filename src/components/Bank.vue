@@ -63,7 +63,7 @@
             </v-slide-group-item>
         </v-slide-group>
     </v-sheet>
-    <v-sheet class="mt-10 d-sm-none mb-10 bg-grey-darken-4">
+    <v-sheet :class="['mt-10', 'd-sm-none','mb-10', {'bg-grey-darken-4': getIsDarkMode}]">
         <v-item-group
             v-model="selection"
         >

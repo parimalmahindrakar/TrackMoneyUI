@@ -155,7 +155,7 @@
       <!-- Advanced Expenses Search -->
       <div v-if="!showFilter" class="w-lg-75 w-100 mb-10">
           <div class="d-flex justify-space-between">
-            <v-combobox
+            <v-select
               variant="outlined"
               density="compact"
               color="success"
@@ -166,7 +166,7 @@
               multiple
               @update:model-value="updateSearchSelectedTags($event)"
             >
-            </v-combobox>
+            </v-select>
             <v-select
               variant="outlined"
               density="compact"
@@ -581,8 +581,7 @@ export default {
       this.setSearchOperator(event)
     },
     updateSearchSelectedTags(event) {
-      // combobox returns both keys and values
-      this.setSearchSelectedTags(event.map(ele => ele.value))
+      this.setSearchSelectedTags(event)
     },
     updateSearchSelectedBanks(event) {
       this.setSearchSelectedBanks(event)

@@ -36,6 +36,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         searchSelectedDaterange: null,
         searchOperator: "and",
         currentTotalOfExpenses: 0,
+        currentTotalOfTopupExpenses: 0,
         isAdvancedSearch: false,
         TM_BACKEND_URL: import.meta.env.VITE_TM_BACKEND_URL,
     }),
@@ -66,6 +67,7 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         getSearchEntryKeyword: (state) => state.searchEntryKeyword,
         getSearchSelectedDaterange: (state) => state.searchSelectedDaterange,
         getCurrentTotalOfExpenses: (state) => state.currentTotalOfExpenses,
+        getCurrentTotalOfTopupExpenses: (state) => state.currentTotalOfTopupExpenses,
         getIsAdvancedSearch: (state) => state.isAdvancedSearch,
         getShowLoader: (state) => state.showLoader,
         getIsDarkMode: (state) => state.isDarkMode
@@ -119,6 +121,9 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
         setCurrentTotalOfExpenses(summation) {
             this.currentTotalOfExpenses = summation
         },
+        setCurrentTotalOfTopupExpenses(summation) {
+            this.currentTotalOfTopupExpenses = summation
+        },
         setShowLoader(status) {
             this.showLoader = status
         },
@@ -155,10 +160,13 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                             ])
                             if(responses){
                                 this.expensesList = responses[0].data?.expenses
-                                const total_summation_obj = this.expensesList.pop("total_summation")
+                                const total_topup_summation_obj = this.expensesList.pop("topup_total")
+                                const total_summation_obj = this.expensesList.pop("non_topup_total")
                                 const total_expenses_obj = this.expensesList.pop("total_expenses")
+
+                                this.currentTotalOfTopupExpenses = total_topup_summation_obj["topup_total"]
+                                this.currentTotalOfExpenses = total_summation_obj["non_topup_total"]
                                 this.currentTotalExpenses = total_expenses_obj["total_expenses"]
-                                this.currentTotalOfExpenses = total_summation_obj["total_summation"]
                                 this.entryTags = responses[1].data?.entry_tags
                                                     .map(ele => ({title: ele.name, value: ele.id}))
                                                     .sort((a, b) => a.title.localeCompare(b.title));
@@ -385,7 +393,10 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 if (resp.status == 200) {
                     this.showLoader = false
                     this.filteredExpensesList = resp?.data?.expenses
-                    this.currentTotalOfExpenses = this.filteredExpensesList.pop("total_summation")["total_summation"]
+
+
+                    this.currentTotalOfTopupExpenses = this.filteredExpensesList.pop("topup_total")["topup_total"]
+                    this.currentTotalOfExpenses = this.filteredExpensesList.pop("non_topup_total")["non_topup_total"]
                     this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
                 }
             } catch (err) {
@@ -432,7 +443,8 @@ export const traceMyMoneyStore = defineStore("traceMyMoney", {
                 if (resp.status === 200) {
                     this.showLoader = false
                     this.filteredExpensesList = resp?.data?.expenses
-                    this.currentTotalOfExpenses = this.filteredExpensesList.pop("total_summation")["total_summation"]
+                    this.currentTotalOfTopupExpenses = this.filteredExpensesList.pop("topup_total")["topup_total"]
+                    this.currentTotalOfExpenses = this.filteredExpensesList.pop("non_topup_total")["non_topup_total"]
                     this.currentTotalExpenses = this.filteredExpensesList.pop("total_expenses")["total_expenses"]
                 }
             } catch (err) {

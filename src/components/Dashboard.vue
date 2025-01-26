@@ -380,7 +380,10 @@
     </v-expansion-panels>
     <div class="border rounded-sm pa-1 mt-2 d-flex justify-space-between bg-success w-lg-75 w-100 mx-auto">
       <span class="font-weight-bold text-white ml-4">Total  : </span>
-      <span class="font-weight-bold text-white mr-4"> {{getCurrentTotalOfExpenses}}/- </span>
+      <div>
+        <span class="font-weight-bold text-white mr-2"> + {{Math.abs(getCurrentTotalOfTopupExpenses)}}/- ,</span>
+        <span class="font-weight-bold text-white mr-2"> {{getCurrentTotalOfExpenses}}/- </span>
+      </div>
     </div>
     <v-pagination
       v-model="getPageNumber"
@@ -473,6 +476,7 @@ export default {
       "getSearchSelectedDaterange",
       "getSearchOperator",
       "getCurrentTotalOfExpenses",
+      "getCurrentTotalOfTopupExpenses",
       "getIsAdvancedSearch",
       "getIsDarkMode"
     ])

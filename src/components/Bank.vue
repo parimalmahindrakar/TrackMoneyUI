@@ -63,7 +63,7 @@
             </v-slide-group-item>
         </v-slide-group>
     </v-sheet>
-    <v-sheet :class="['mt-10', 'd-sm-none','mb-10', {'bg-grey-darken-4': getIsDarkMode}]">
+    <v-sheet :class="['mt-10', 'd-sm-none','mb-10', {'bg-grey-darken-4': getIsDarkMode}, 'overflow-scroll-bank', 'mx-auto']">
         <v-item-group
             v-model="selection"
         >
@@ -80,7 +80,7 @@
                         height="150"
                         width="150"
                         @click="toggle"
-                        :class="[ {'bg-grey-darken-4': getIsDarkMode}, {'bg-success': isSelected}]"
+                        :class="['elevation-10', {'bg-grey-darken-4': getIsDarkMode}, {'bg-success': isSelected}]"
                     >
                         <v-chip size="x-small" color="red custom-chip" @click="deleteBankSoft(bank.bankId)">
                             <v-icon color="red">
@@ -110,7 +110,7 @@
                     height="150"
                     width="150"
                     @click="() => {setCreateBankDialogVisible(true)}"
-                    :class="[{'bg-grey-darken-4': getIsDarkMode}]"
+                    :class="[{'bg-grey-darken-4': getIsDarkMode}, 'elevation-10']"
                 >
                     <v-row >
                         <v-col cols="12" class="text-center">
@@ -174,3 +174,11 @@ export default {
     },
 }
 </script>
+<style>
+.overflow-scroll-bank {
+    height: 200px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: 95%;
+}
+</style>

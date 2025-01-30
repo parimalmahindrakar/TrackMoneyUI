@@ -75,7 +75,7 @@ export default {
         "entry_id": this.tagInfo.ee_id,
         "expense_id": this.tagInfo.expenseId,
         "selected_tags": this.selectedTags,
-        "description": this.tagInfo.description
+        "updated_description": this.tagInfo.description
       }
       this.applyTagsToExpenseEntry(applyTagData)
     }

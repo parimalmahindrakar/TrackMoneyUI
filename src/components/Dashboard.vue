@@ -4,400 +4,408 @@
   <CreateBankDialogVue/>
   <ApplyEntryTagsVue :tagInfo="applyTagInfo" />
   <v-container class="mt-9 w-xl-75 w-100" v-if="getLoggedInStatus">
-    <BankVue/>
-    <v-expansion-panels>
-      <div class="w-100 w-lg-75 mb-5">
-        <v-btn-toggle
-          rounded
-          color="success border border-grey"
-          :class="['d-flex', 'justify-space-between', {'bg-grey-darken-4': getIsDarkMode}]"
-          v-model="toggleActionsFilter"
-          elevation="3"
-          density="compact"
-          variant="outlined"
-        >
-          <v-btn variant="outlined border border-none"
-            @click="showFilter = !showFilter"
-          >Actions</v-btn>
-          <v-btn variant="outlined border border-none"
-            @click="showFilter = !showFilter"
-          >Filters</v-btn>
-        </v-btn-toggle>
-      </div>
-      <div
-        v-if="showFilter"
-        :class="['w-100', 'w-lg-75', {'mb-1': toggleActionsFilter == 1}, 'mb-5']">
-        <v-row>
-          <v-col cols="12" md="6" lg="8">
-            <v-expansion-panel :class="['chip-container', {'bg-grey-darken-4': getIsDarkMode}]">
-              <v-expansion-panel-title>
-                <template v-slot:default="{ expanded }">
-                  <v-row no-gutters>
-                    <v-col class="d-flex justify-start align-center" cols="8">
-                      Add an expense
-                    </v-col>
-                  </v-row>
-                </template>
-              </v-expansion-panel-title>
-              <v-expansion-panel-text>
-                <div class="d-flex flex-column mt-3">
-                  <v-select
-                    :items="getBankItems"
-                    v-model="selectedBank"
-                    variant="outlined"
-                    color="success"
-                    density="compact"
-                    label="Select the bank"
-                    class="w-100"
-                  ></v-select>
-                  <v-text-field
-                    label="Add the date"
-                    variant="outlined"
-                    color="success"
-                    density="compact"
-                    v-model="getExpenseEntryCreationDate"
-                    @update:modelValue="changeExpenseEntryCreationDate"
-                  ></v-text-field>
-                </div>
-                <div class="d-flex justify-center align-center">
-                  <div class="w-100 mx-auto">
-                    <template v-for="item, index in initialExpenseEntriesList" :key="index">
-                      <div class="d-flex justify-space-between">
-                        <v-text-field
-                          v-model="item.amount"
-                          color="success"
-                          label="Amount"
-                          type="number"
-                          density="compact"
-                          class="custom-hide_input_details w-25 mr-1"
-                          variant="outlined"
-                        ></v-text-field>
-                        <v-text-field
-                          v-model="item.description"
-                          color="success"
-                          density="compact"
-                          class="custom-hide_input_details w-75"
-                          label="Description"
-                          variant="outlined"
-                        ></v-text-field>
-                        <span
-                          class="font-weight-bold border ml-1 border-red d-flex align-center rounded"
-                          @click="removeInitialExpenseEntry(index)"
+    <div v-if="!showGraphs">
+      <BankVue/>
+      <v-expansion-panels>
+        <div class="w-100 w-lg-75 mb-5">
+          <v-btn-toggle
+            rounded
+            color="success border border-grey"
+            :class="['d-flex', 'justify-space-between', {'bg-grey-darken-4': getIsDarkMode}]"
+            v-model="toggleActionsFilter"
+            elevation="3"
+            density="compact"
+            variant="outlined"
+          >
+            <v-btn variant="outlined border border-none"
+              @click="showFilter = !showFilter"
+            >Actions</v-btn>
+            <v-btn variant="outlined border border-none"
+              @click="some"
+            >Graphs</v-btn>
+            <v-btn variant="outlined border border-none"
+              @click="showFilter = !showFilter"
+            >Filters</v-btn>
+          </v-btn-toggle>
+        </div>
+        <div
+          v-if="showFilter"
+          :class="['w-100', 'w-lg-75', {'mb-1': toggleActionsFilter == 1}, 'mb-5']">
+          <v-row>
+            <v-col cols="12" md="6" lg="8">
+              <v-expansion-panel :class="['chip-container', {'bg-grey-darken-4': getIsDarkMode}]">
+                <v-expansion-panel-title>
+                  <template v-slot:default="{ expanded }">
+                    <v-row no-gutters>
+                      <v-col class="d-flex justify-start align-center" cols="8">
+                        Add an expense
+                      </v-col>
+                    </v-row>
+                  </template>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <div class="d-flex flex-column mt-3">
+                    <v-select
+                      :items="getBankItems"
+                      v-model="selectedBank"
+                      variant="outlined"
+                      color="success"
+                      density="compact"
+                      label="Select the bank"
+                      class="w-100"
+                    ></v-select>
+                    <v-text-field
+                      label="Add the date"
+                      variant="outlined"
+                      color="success"
+                      density="compact"
+                      v-model="getExpenseEntryCreationDate"
+                      @update:modelValue="changeExpenseEntryCreationDate"
+                    ></v-text-field>
+                  </div>
+                  <div class="d-flex justify-center align-center">
+                    <div class="w-100 mx-auto">
+                      <template v-for="item, index in initialExpenseEntriesList" :key="index">
+                        <div class="d-flex justify-space-between">
+                          <v-text-field
+                            v-model="item.amount"
+                            color="success"
+                            label="Amount"
+                            type="number"
+                            density="compact"
+                            class="custom-hide_input_details w-25 mr-1"
+                            variant="outlined"
+                          ></v-text-field>
+                          <v-text-field
+                            v-model="item.description"
+                            color="success"
+                            density="compact"
+                            class="custom-hide_input_details w-75"
+                            label="Description"
+                            variant="outlined"
+                          ></v-text-field>
+                          <span
+                            class="font-weight-bold border ml-1 border-red d-flex align-center rounded"
+                            @click="removeInitialExpenseEntry(index)"
+                          >
+                            <v-icon>
+                              mdi-minus
+                            </v-icon>
+                          </span>
+                        </div>
+                        <v-select
+                            class="custom-hide_input_details mt-5"
+                            variant="outlined"
+                            density="compact"
+                            color="success"
+                            label="Select the tag"
+                            v-model="item.selected_tags"
+                            :items="getEntryTags"
+                            multiple
                         >
-                          <v-icon>
-                            mdi-minus
-                          </v-icon>
-                        </span>
-                      </div>
-                      <v-select
-                          class="custom-hide_input_details mt-5"
+                        </v-select>
+                        <v-divider class="py-2"></v-divider>
+                      </template>
+                      <div class="d-flex justify-center align-center px-2">
+                        <v-btn
                           variant="outlined"
-                          density="compact"
                           color="success"
-                          label="Select the tag"
-                          v-model="item.selected_tags"
-                          :items="getEntryTags"
-                          multiple
-                      >
-                      </v-select>
-                      <v-divider class="py-2"></v-divider>
-                    </template>
-                    <div class="d-flex justify-center align-center px-2">
-                      <v-btn
-                        variant="outlined"
-                        color="success"
-                        class=" mt-3 cursor-pointer bg-dark w-50 text-center"
-                        @click="addInitialExpenseEntry(e)">
-                        + Add entry
-                      </v-btn>
-                      <v-btn
-                        variant="outlined"
-                        color="success"
-                        v-if="initialExpenseEntriesList.length >= 1"
-                        class="ml-4 mt-3  cursor-pointer bg-dark w-50"
-                        @click="submitExpenseSoft">
-                        Submit
-                      </v-btn>
+                          class=" mt-3 cursor-pointer bg-dark w-50 text-center"
+                          @click="addInitialExpenseEntry(e)">
+                          + Add entry
+                        </v-btn>
+                        <v-btn
+                          variant="outlined"
+                          color="success"
+                          v-if="initialExpenseEntriesList.length >= 1"
+                          class="ml-4 mt-3  cursor-pointer bg-dark w-50"
+                          @click="submitExpenseSoft">
+                          Submit
+                        </v-btn>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </v-expansion-panel-text>
-            </v-expansion-panel>
-          </v-col>
-          <v-col cols="12" md="6" lg="4">
-            <v-expansion-panel :class="['chip-container', {'bg-grey-darken-4': getIsDarkMode}]">
-              <v-expansion-panel-title>
-                <template v-slot:default="{ expanded }">
-                  <v-row no-gutters>
-                    <v-col class="d-flex justify-start align-center" cols="8">
-                      Create the tag
-                    </v-col>
-                  </v-row>
-                </template>
-              </v-expansion-panel-title>
-              <v-expansion-panel-text>
-                <v-combobox
-                  clearable
-                  color="success"
-                  density="compact"
-                  variant="outlined"
-                  placeholder="Enter the name of tag"
-                  :items="getEntryTags"
-                  v-model="newEntryTag"
-                ></v-combobox>
-                <v-btn class="w-100" variant="outlined" color="success" @click="addTag">Submit</v-btn>
-              </v-expansion-panel-text>
-            </v-expansion-panel>
-          </v-col>
-        </v-row>
-      </div>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-col>
+            <v-col cols="12" md="6" lg="4">
+              <v-expansion-panel :class="['chip-container', {'bg-grey-darken-4': getIsDarkMode}]">
+                <v-expansion-panel-title>
+                  <template v-slot:default="{ expanded }">
+                    <v-row no-gutters>
+                      <v-col class="d-flex justify-start align-center" cols="8">
+                        Create the tag
+                      </v-col>
+                    </v-row>
+                  </template>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <v-combobox
+                    clearable
+                    color="success"
+                    density="compact"
+                    variant="outlined"
+                    placeholder="Enter the name of tag"
+                    :items="getEntryTags"
+                    v-model="newEntryTag"
+                  ></v-combobox>
+                  <v-btn class="w-100" variant="outlined" color="success" @click="addTag">Submit</v-btn>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-col>
+          </v-row>
+        </div>
 
-      <!-- Advanced Expenses Search -->
-      <div v-if="!showFilter" class="w-lg-75 w-100 mb-10">
-          <div class="d-flex justify-space-between">
-            <v-select
-              variant="outlined"
-              density="compact"
-              color="success"
-              v-model="getSearchSelectedTags"
-              :items="getEntryTags"
-              label="Tags"
-              class="custom-hide_input_details mr-2 w-25"
-              multiple
-              @update:model-value="updateSearchSelectedTags($event)"
-            >
-            </v-select>
-            <v-select
-              variant="outlined"
-              density="compact"
-              color="success"
-              v-model="getSearchSelectedBanks"
-              :items="getBankItems"
-              class="custom-hide_input_details mr-2 w-25"
-              label="Banks"
-              @update:model-value="updateSearchSelectedBanks($event)"
-              multiple
-            >
-            </v-select>
-            <v-select
-              variant="outlined"
-              density="compact"
-              color="success"
-              class="custom-hide_input_details w-40"
-              :items="dateranges"
-              v-model="getSearchSelectedDaterange"
-              label="Daterange"
-              clearable
-              @update:model-value="updateSearchSelectedDaterange($event)"
-            >
-            </v-select>
-          </div>
-          <div class="d-flex my-3">
-            <v-text-field
-              variant="outlined"
-              color="success"
-              density="compact"
-              v-model="getSearchEntryKeyword"
-              class="custom-hide_input_details mr-2 w-50"
-              label="Search by keyword"
-              @update:model-value="updateSearchEntryKeyword($event)"
-            >
-            </v-text-field>
-            <v-select
-              variant="outlined"
-              density="compact"
-              color="success"
-              label="Operator"
-              class="custom-hide_input_details mr-2"
-              v-model="getSearchOperator"
-              :items="operatorItems"
-              @update:model-value="updateSearchOperator($event)"
-            >
-
-            </v-select>
-            <v-select
-              v-model="getPageSize"
-              :items="pazeSizes"
-              variant="outlined"
-              color="success"
-              class="custom-hide_input_details"
-              density="compact"
-              @update:modelValue="onPageChange($event, 'pageSize')"
-            >
-            </v-select>
-          </div>
-          <div class="d-flex">
-            <div class="w-100">
-              <v-btn
-                :disabled="false"
-                class="w-100"
+        <!-- Advanced Expenses Search -->
+        <div v-if="!showFilter" class="w-lg-75 w-100 mb-10">
+            <div class="d-flex justify-space-between">
+              <v-select
+                variant="outlined"
+                density="compact"
                 color="success"
-                variant="outlined"
-                @click="makeSoftAdvancedExpenseSearch"
-                >
-                Search
-              </v-btn>
-            </div>
-            &nbsp;&nbsp;
-            <div>
-              <v-btn
-                variant="outlined"
-                :class="[
-                  getIsAdvancedSearch ? 'bg-success text-white border border-1' : 'bg-white text-green',
-                  getIsDarkMode ? 'bg-grey-darken-4' : ''
-                ]"
-                @click="resetAdvancedSearch"
+                v-model="getSearchSelectedTags"
+                :items="getEntryTags"
+                label="Tags"
+                class="custom-hide_input_details mr-2 w-25"
+                multiple
+                @update:model-value="updateSearchSelectedTags($event)"
               >
-                <v-icon>
-                  mdi-refresh
-                </v-icon>
-              </v-btn>
+              </v-select>
+              <v-select
+                variant="outlined"
+                density="compact"
+                color="success"
+                v-model="getSearchSelectedBanks"
+                :items="getBankItems"
+                class="custom-hide_input_details mr-2 w-25"
+                label="Banks"
+                @update:model-value="updateSearchSelectedBanks($event)"
+                multiple
+              >
+              </v-select>
+              <v-select
+                variant="outlined"
+                density="compact"
+                color="success"
+                class="custom-hide_input_details w-40"
+                :items="dateranges"
+                v-model="getSearchSelectedDaterange"
+                label="Daterange"
+                clearable
+                @update:model-value="updateSearchSelectedDaterange($event)"
+              >
+              </v-select>
             </div>
-          </div>
-      </div>
-      <div class="w-100 w-lg-75">
-        <v-expansion-panel
-          v-for="expense in getFilteredExpensesList"
-          :key="expense"
-          :class="['chip-container', {'bg-grey-darken-4': getIsDarkMode}]"
-        >
-          <v-expansion-panel-title :class="['px-2', 'mb-3', {'bg-grey-darken-4': getIsDarkMode}]">
-            <template v-slot:default="{ expanded }">
-              <v-row no-gutters>
-                <v-col class="d-flex justify-space-between align-center" cols="12">
-                  {{(expense.created_at).slice(0, 10)}} | {{ expense.day }} @ {{expense.bank_name}}
-                  <div>
-                    <v-chip size="x-small" class="ml-2 hover-chip" @click="deleteExpenseSoft(expense.id)">
-                      <v-icon>mdi-delete</v-icon>
-                    </v-chip>
-                  </div>
-                </v-col>
-                <v-col cols="12" :class="['d-flex', 'mt-2', 'justify-space-between', {'bg-grey-darken-4': getIsDarkMode}]">
-                    <span class="font-weight-bold">Remaining : {{expense.remaining_amount_till_now}}/-</span>
+            <div class="d-flex my-3">
+              <v-text-field
+                variant="outlined"
+                color="success"
+                density="compact"
+                v-model="getSearchEntryKeyword"
+                class="custom-hide_input_details mr-2 w-50"
+                label="Search by keyword"
+                @update:model-value="updateSearchEntryKeyword($event)"
+              >
+              </v-text-field>
+              <v-select
+                variant="outlined"
+                density="compact"
+                color="success"
+                label="Operator"
+                class="custom-hide_input_details mr-2"
+                v-model="getSearchOperator"
+                :items="operatorItems"
+                @update:model-value="updateSearchOperator($event)"
+              >
+
+              </v-select>
+              <v-select
+                v-model="getPageSize"
+                :items="pazeSizes"
+                variant="outlined"
+                color="success"
+                class="custom-hide_input_details"
+                density="compact"
+                @update:modelValue="onPageChange($event, 'pageSize')"
+              >
+              </v-select>
+            </div>
+            <div class="d-flex">
+              <div class="w-100">
+                <v-btn
+                  :disabled="false"
+                  class="w-100"
+                  color="success"
+                  variant="outlined"
+                  @click="makeSoftAdvancedExpenseSearch"
+                  >
+                  Search
+                </v-btn>
+              </div>
+              &nbsp;&nbsp;
+              <div>
+                <v-btn
+                  variant="outlined"
+                  :class="[
+                    getIsAdvancedSearch ? 'bg-success text-white border border-1' : 'bg-white text-green',
+                    getIsDarkMode ? 'bg-grey-darken-4' : ''
+                  ]"
+                  @click="resetAdvancedSearch"
+                >
+                  <v-icon>
+                    mdi-refresh
+                  </v-icon>
+                </v-btn>
+              </div>
+            </div>
+        </div>
+        <div class="w-100 w-lg-75">
+          <v-expansion-panel
+            v-for="expense in getFilteredExpensesList"
+            :key="expense"
+            :class="['chip-container', {'bg-grey-darken-4': getIsDarkMode}]"
+          >
+            <v-expansion-panel-title :class="['px-2', 'mb-3', {'bg-grey-darken-4': getIsDarkMode}]">
+              <template v-slot:default="{ expanded }">
+                <v-row no-gutters>
+                  <v-col class="d-flex justify-space-between align-center" cols="12">
+                    {{(expense.created_at).slice(0, 10)}} | {{ expense.day }} @ {{expense.bank_name}}
                     <div>
-                      <span v-if="expense.topup_expense_total < 0" class="font-weight-bold">+ {{Math.abs(expense.topup_expense_total)}}/-</span>
-                      &nbsp;&nbsp;
-                      <span class="font-weight-bold"> {{expense.expense_total}}/-</span>
+                      <v-chip size="x-small" class="ml-2 hover-chip" @click="deleteExpenseSoft(expense.id)">
+                        <v-icon>mdi-delete</v-icon>
+                      </v-chip>
                     </div>
-                </v-col>
-              </v-row>
-            </template>
-          </v-expansion-panel-title>
-          <v-expansion-panel-text :class="[{'bg-grey-darken-4': getIsDarkMode}]">
-            <v-divider class="w-100 mx-auto mb-1"></v-divider>
-            <div v-for="item in expense.expenses" :key="item.id" >
-              <div class="d-flex flex-column justify-space-between expense-entry mx-lg-10">
-                <v-row>
-                  <v-col cols="8">
-                    <span
-                      class="text-left cursor-pointer"
-                      @click="getEntryInformation(expense, item)">
-                      {{item.description}}
-                      <v-icon
-                        v-if="item.entry_tags?.length > 0"
-                        size="x-small"
-                        color="success"
-                      >
-                        mdi-tag
-                      </v-icon>
-                    </span>
-                    <v-chip
-                      size="x-small"
-                      class="hover-entry-chip ml-4"
-                      @click="deleteExpenseEnrtySoft(expense.id, item.ee_id)">
-                      <v-icon>mdi-delete</v-icon>
-                    </v-chip>
                   </v-col>
-                  <v-col cols="4">
-                    <div class="font-weight-bold text-right">
-                      {{ item.amount < 0 ? `+ ${Math.abs(item.amount)}/-`: `${item.amount}/-` }}
-                    </div>
+                  <v-col cols="12" :class="['d-flex', 'mt-2', 'justify-space-between', {'bg-grey-darken-4': getIsDarkMode}]">
+                      <span class="font-weight-bold">Remaining : {{expense.remaining_amount_till_now}}/-</span>
+                      <div>
+                        <span v-if="expense.topup_expense_total < 0" class="font-weight-bold">+ {{Math.abs(expense.topup_expense_total)}}/-</span>
+                        &nbsp;&nbsp;
+                        <span class="font-weight-bold"> {{expense.expense_total}}/-</span>
+                      </div>
                   </v-col>
                 </v-row>
-                <div class="ml-3 font-weight-bold"></div>
+              </template>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text :class="[{'bg-grey-darken-4': getIsDarkMode}]">
+              <v-divider class="w-100 mx-auto mb-1"></v-divider>
+              <div v-for="item in expense.expenses" :key="item.id" >
+                <div class="d-flex flex-column justify-space-between expense-entry mx-lg-10">
+                  <v-row>
+                    <v-col cols="8">
+                      <span
+                        class="text-left cursor-pointer"
+                        @click="getEntryInformation(expense, item)">
+                        {{item.description}}
+                        <v-icon
+                          v-if="item.entry_tags?.length > 0"
+                          size="x-small"
+                          color="success"
+                        >
+                          mdi-tag
+                        </v-icon>
+                      </span>
+                      <v-chip
+                        size="x-small"
+                        class="hover-entry-chip ml-4"
+                        @click="deleteExpenseEnrtySoft(expense.id, item.ee_id)">
+                        <v-icon>mdi-delete</v-icon>
+                      </v-chip>
+                    </v-col>
+                    <v-col cols="4">
+                      <div class="font-weight-bold text-right">
+                        {{ item.amount < 0 ? `+ ${Math.abs(item.amount)}/-`: `${item.amount}/-` }}
+                      </div>
+                    </v-col>
+                  </v-row>
+                  <div class="ml-3 font-weight-bold"></div>
+                </div>
+                <v-divider class="w-100 mx-auto mt-1"></v-divider>
               </div>
-              <v-divider class="w-100 mx-auto mt-1"></v-divider>
-            </div>
-            <div class="d-flex justify-center align-center">
-              <div class="w-100 mt-3 mx-auto">
-                <template v-for="item, index in expenseEntriesList" :key="index">
-                  <div class="d-flex justify-space-between mt-5">
-                    <v-text-field
-                      v-model="item.amount"
-                      color="success"
-                      class="custom-hide_input_details w-25 mr-1"
-                      label="Amount"
-                      type="number"
+              <div class="d-flex justify-center align-center">
+                <div class="w-100 mt-3 mx-auto">
+                  <template v-for="item, index in expenseEntriesList" :key="index">
+                    <div class="d-flex justify-space-between mt-5">
+                      <v-text-field
+                        v-model="item.amount"
+                        color="success"
+                        class="custom-hide_input_details w-25 mr-1"
+                        label="Amount"
+                        type="number"
+                        variant="outlined"
+                        density="compact"
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="item.description"
+                        color="success"
+                        class="custom-hide_input_details w-75"
+                        label="Description"
+                        density="compact"
+                        variant="outlined"
+                      ></v-text-field>
+                      <span class="border d-flex align-center ml-1">
+                        <v-icon @click="removeExpenseEntry(index)">
+                          mdi-minus
+                        </v-icon>
+                      </span>
+                    </div>
+                    <v-select
+                      class="w-100 custom-hide_input_details mt-3"
                       variant="outlined"
-                      density="compact"
-                    ></v-text-field>
-                    <v-text-field
-                      v-model="item.description"
                       color="success"
-                      class="custom-hide_input_details w-75"
-                      label="Description"
+                      label="Select the tag"
                       density="compact"
+                      v-model="item.entry_tags"
+                      :items="getEntryTags"
+                      multiple
+                    >
+                    </v-select>
+                  </template>
+                  <div class="mt-6 d-flex justify-space-between">
+                    <v-btn
                       variant="outlined"
-                    ></v-text-field>
-                    <span class="border d-flex align-center ml-1">
-                      <v-icon @click="removeExpenseEntry(index)">
-                        mdi-minus
-                      </v-icon>
-                    </span>
+                      color="success"
+                      class=" cursor-pointer bg-dark w-48"
+                      @click="addExpenseEntry(e)">+ Add entry</v-btn>
+                    <v-btn
+                      v-if="expenseEntriesList.length >= 1"
+                      variant="outlined"
+                      color="success"
+                      class=" cursor-pointer bg-dark w-50"
+                      @click="submitExpenseEntrySoft(expense.id)">
+                      Submit
+                    </v-btn>
                   </div>
-                  <v-select
-                    class="w-100 custom-hide_input_details mt-3"
-                    variant="outlined"
-                    color="success"
-                    label="Select the tag"
-                    density="compact"
-                    v-model="item.entry_tags"
-                    :items="getEntryTags"
-                    multiple
-                  >
-                  </v-select>
-                </template>
-                <div class="mt-6 d-flex justify-space-between">
-                  <v-btn
-                    variant="outlined"
-                    color="success"
-                    class=" cursor-pointer bg-dark w-48"
-                    @click="addExpenseEntry(e)">+ Add entry</v-btn>
-                  <v-btn
-                    v-if="expenseEntriesList.length >= 1"
-                    variant="outlined"
-                    color="success"
-                    class=" cursor-pointer bg-dark w-50"
-                    @click="submitExpenseEntrySoft(expense.id)">
-                    Submit
-                  </v-btn>
                 </div>
               </div>
-            </div>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </div>
+      </v-expansion-panels>
+      <div class="border rounded-sm pa-1 mt-2 d-flex justify-space-between bg-success w-lg-75 w-100 mx-auto">
+        <span class="font-weight-bold text-white ml-4">Total  : </span>
+        <div>
+          <span class="font-weight-bold text-white mr-2"> + {{Math.abs(getCurrentTotalOfTopupExpenses)}}/- ,</span>
+          <span class="font-weight-bold text-white mr-2"> {{getCurrentTotalOfExpenses}}/- </span>
+        </div>
       </div>
-    </v-expansion-panels>
-    <div class="border rounded-sm pa-1 mt-2 d-flex justify-space-between bg-success w-lg-75 w-100 mx-auto">
-      <span class="font-weight-bold text-white ml-4">Total  : </span>
-      <div>
-        <span class="font-weight-bold text-white mr-2"> + {{Math.abs(getCurrentTotalOfTopupExpenses)}}/- ,</span>
-        <span class="font-weight-bold text-white mr-2"> {{getCurrentTotalOfExpenses}}/- </span>
-      </div>
+      <v-pagination
+        v-model="getPageNumber"
+        :length="(getCurrentTotalExpenses / getPageSize) + 1"
+        :total-visible="6"
+        class="mt-5 w-100"
+        size="x-small"
+        variant="elevated"
+        :color="getIsDarkMode ? 'grey-darken-4' : undefined"
+        active-color="success"
+        @next="onPageChange($event, 'pageNumber')"
+        @prev="onPageChange($event, 'pageNumber')"
+        @update:modelValue="onPageChange($event, 'pageNumber')"
+      ></v-pagination>
     </div>
-    <v-pagination
-      v-model="getPageNumber"
-      :length="(getCurrentTotalExpenses / getPageSize) + 1"
-      :total-visible="6"
-      class="mt-5 w-100"
-      size="x-small"
-      variant="elevated"
-      :color="getIsDarkMode ? 'grey-darken-4' : undefined"
-      active-color="success"
-      @next="onPageChange($event, 'pageNumber')"
-      @prev="onPageChange($event, 'pageNumber')"
-      @update:modelValue="onPageChange($event, 'pageNumber')"
-    ></v-pagination>
+    <div v-else>
+      <GraphsVue/>
+    </div>
   </v-container>
   <v-container class="mt-15" v-else>
     <div class="mt-15 d-flex justify-center align-center">
@@ -411,6 +419,7 @@
 import { reactive } from "vue";
 import { mapActions, mapState } from 'pinia'
 import { traceMyMoneyStore } from "@/stores/traceMyMoneyStore";
+import { useChartStore } from "@/stores/chartStore";
 import { filterValidExpenses } from '../helper/helper'
 
 // components
@@ -421,6 +430,7 @@ import NavbarVue from './Navbar.vue';
 import AlertVue from './Alert.vue';
 import CreateBankDialogVue from './CreateBankDialog.vue';
 import ApplyEntryTagsVue from './ApplyEntryTags.vue';
+import GraphsVue from './Graphs.vue';
 
 // constants
 import {
@@ -446,7 +456,8 @@ export default {
       toggleActionsFilter: 0,
       dateranges: DATERANGES,
       operatorItems: OPERATORS,
-      pazeSizes: PAGE_SIZES
+      pazeSizes: PAGE_SIZES,
+      showGraphs: false,
     }
   },
   components: {
@@ -456,7 +467,8 @@ export default {
     NavbarVue,
     AlertVue,
     CreateBankDialogVue,
-    ApplyEntryTagsVue
+    ApplyEntryTagsVue,
+    GraphsVue
   },
   computed: {
     ...mapState(traceMyMoneyStore, [
@@ -503,6 +515,9 @@ export default {
       "setSearchEntryKeyword",
       "setSearchSelectedDaterange",
       "setAdvancedSearch"
+    ]),
+    ...mapActions(useChartStore, [
+      "updateSalesData"
     ]),
 
     // API related functions
@@ -605,6 +620,9 @@ export default {
       this.setSearchEntryKeyword("")
       this.setSearchSelectedDaterange(null)
       this.setAdvancedSearch(false)
+    },
+    some() {
+      this.showGraphs = !this.showGraphs
     }
   }
 }
